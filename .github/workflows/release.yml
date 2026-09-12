@@ -55,8 +55,10 @@ jobs:
       - name: Test
         run: dotnet test tests/TextRecognizers.Tests/TextRecognizers.Tests.csproj -c Release --no-build
 
+      # No --no-build here: TextRecognizers.Core sets IsPackable=false, and packing the
+      # solution still invokes its Build target, which NoBuild rejects (NETSDK1085).
       - name: Pack
-        run: dotnet pack TextRecognizers.slnx -c Release -o build/packages --no-build
+        run: dotnet pack TextRecognizers.slnx -c Release -o build/packages
 
       # On a tag push the tag is github.ref_name; on a manual run it comes from the
       # input above. `gh release create` creates the tag at this commit if needed.
