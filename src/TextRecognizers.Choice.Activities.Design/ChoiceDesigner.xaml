@@ -1,0 +1,24 @@
+<sap:ActivityDesigner x:Class="TextRecognizers.Choices.Design.ChoiceDesigner"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:sap="clr-namespace:System.Activities.Presentation;assembly=System.Activities.Presentation">
+    <sap:ActivityDesigner.Icon>
+        <DrawingBrush Stretch="Uniform">
+            <DrawingBrush.Drawing>
+                <!-- A toggle (yes / no) glyph for the Choice / boolean activities. -->
+                <GeometryDrawing>
+                    <GeometryDrawing.Pen>
+                        <Pen Brush="#5B5BD6" Thickness="2" LineJoin="Round" StartLineCap="Round" EndLineCap="Round"/>
+                    </GeometryDrawing.Pen>
+                    <GeometryDrawing.Geometry>
+                        <GeometryGroup>
+                            <RectangleGeometry Rect="3,8,18,8" RadiusX="4" RadiusY="4"/>
+                            <EllipseGeometry Center="16,12" RadiusX="2.5" RadiusY="2.5"/>
+                        </GeometryGroup>
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+            </DrawingBrush.Drawing>
+        </DrawingBrush>
+    </sap:ActivityDesigner.Icon>
+    <Grid Margin="2" MinWidth="160" MinHeight="20"/>
+</sap:ActivityDesigner>

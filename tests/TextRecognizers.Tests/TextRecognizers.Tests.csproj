@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
+    <PackageReference Include="xunit" Version="2.9.2" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2" />
+    <!-- WorkflowInvoker, used to run each activity exactly as Studio would. -->
+    <PackageReference Include="System.Activities" Version="5.0.0-20210730-02" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Core is referenced directly: the activity packages embed it but mark it PrivateAssets,
+         so it no longer flows transitively to consumers. -->
+    <ProjectReference Include="..\..\src\TextRecognizers.Core\TextRecognizers.Core.csproj" />
+    <ProjectReference Include="..\..\src\TextRecognizers.DateTime.Activities\TextRecognizers.DateTime.Activities.csproj" />
+    <ProjectReference Include="..\..\src\TextRecognizers.Number.Activities\TextRecognizers.Number.Activities.csproj" />
+    <ProjectReference Include="..\..\src\TextRecognizers.NumberWithUnit.Activities\TextRecognizers.NumberWithUnit.Activities.csproj" />
+    <ProjectReference Include="..\..\src\TextRecognizers.Sequence.Activities\TextRecognizers.Sequence.Activities.csproj" />
+    <ProjectReference Include="..\..\src\TextRecognizers.Choice.Activities\TextRecognizers.Choice.Activities.csproj" />
+  </ItemGroup>
+
+</Project>

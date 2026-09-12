@@ -1,0 +1,13 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/TextRecognizers.Choice.Activities/TextRecognizers.Choice.Activities.csproj" />
+    <Project Path="src/TextRecognizers.Core/TextRecognizers.Core.csproj" />
+    <Project Path="src/TextRecognizers.DateTime.Activities/TextRecognizers.DateTime.Activities.csproj" />
+    <Project Path="src/TextRecognizers.Number.Activities/TextRecognizers.Number.Activities.csproj" />
+    <Project Path="src/TextRecognizers.NumberWithUnit.Activities/TextRecognizers.NumberWithUnit.Activities.csproj" />
+    <Project Path="src/TextRecognizers.Sequence.Activities/TextRecognizers.Sequence.Activities.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/TextRecognizers.Tests/TextRecognizers.Tests.csproj" />
+  </Folder>
+</Solution>

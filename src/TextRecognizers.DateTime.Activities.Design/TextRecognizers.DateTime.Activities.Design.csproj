@@ -1,0 +1,40 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
+    <UseWPF>true</UseWPF>
+    <RootNamespace>TextRecognizers.DateTimes.Design</RootNamespace>
+    <AssemblyName>TextRecognizers.DateTime.Activities.Design</AssemblyName>
+    <IsPackable>false</IsPackable>
+    <Nullable>disable</Nullable>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+
+    <!-- The design-time WPF assemblies (ActivityDesigner, IRegisterMetadata, …) are supplied by
+         UiPath Studio. They are referenced for compile only and resolved from the local Studio
+         install. Override UiPathStudioDir if Studio is installed elsewhere. -->
+    <UiPathStudioDir Condition="'$(UiPathStudioDir)' == ''">$(LOCALAPPDATA)\Programs\UiPath\Studio</UiPathStudioDir>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TextRecognizers.DateTime.Activities\TextRecognizers.DateTime.Activities.csproj" />
+    <PackageReference Include="System.Activities" Version="5.0.0-20210730-02" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Studio-provided; do not copy/bundle (Private=false). -->
+    <Reference Include="System.Activities.Presentation">
+      <HintPath>$(UiPathStudioDir)\System.Activities.Presentation.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="System.Activities.Presentation.Model">
+      <HintPath>$(UiPathStudioDir)\System.Activities.Presentation.Model.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="System.Activities.Metadata">
+      <HintPath>$(UiPathStudioDir)\System.Activities.Metadata.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+  </ItemGroup>
+
+</Project>

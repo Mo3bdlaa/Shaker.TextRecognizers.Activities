@@ -1,0 +1,47 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <PackageId>TextRecognizers.Number.Activities</PackageId>
+    <AssemblyName>TextRecognizers.Number.Activities</AssemblyName>
+    <RootNamespace>TextRecognizers.Numbers</RootNamespace>
+    <Description>Ready-to-use UiPath activities that recognise and parse numbers, ordinals and percentages from natural-language text. Powered by Microsoft.Recognizers.Text and fully offline.</Description>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+
+    <!-- Offline / airgapped packaging (see the embedding target below). -->
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);IncludeRecognizerAssembliesInPackage</TargetsForTfmSpecificBuildOutput>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TextRecognizers.Core\TextRecognizers.Core.csproj" PrivateAssets="all" />
+    <!-- Workflow base types; compile-time only (host supplies them at run time). -->
+    <PackageReference Include="System.Activities" Version="5.0.0-20210730-02" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- The recognition engine. Offline, no network. PrivateAssets keeps it out of the
+         declared dependencies; the DLLs are embedded by the target below instead. -->
+    <PackageReference Include="Microsoft.Recognizers.Text.Number" Version="1.8.13" PrivateAssets="all" />
+  </ItemGroup>
+
+  <!-- Embeds the recognizer's runtime closure (Microsoft.Recognizers.* + Microsoft.Extensions.*)
+       into lib/<tfm>/ so the single .nupkg is fully self-contained and airgapped-installable. -->
+  <Target Name="IncludeRecognizerAssembliesInPackage" DependsOnTargets="ResolveReferences">
+    <PropertyGroup>
+      <_DesignDll>$(MSBuildThisFileDirectory)..\TextRecognizers.Number.Activities.Design\bin\$(Configuration)\$(TargetFramework)\TextRecognizers.Number.Activities.Design.dll</_DesignDll>
+    </PropertyGroup>
+    <ItemGroup>
+      <BuildOutputInPackage Include="@(ReferenceCopyLocalPaths)"
+                            Condition="$([System.String]::Copy('%(FileName)').StartsWith('Microsoft.Recognizers')) Or $([System.String]::Copy('%(FileName)').StartsWith('Microsoft.Extensions')) Or $([System.String]::Copy('%(FileName)').StartsWith('TextRecognizers.Core'))" />
+      <!-- Studio-only design assembly (panel icons). Lives beside the runtime DLL in lib/<tfm>/; the
+           robot never loads it. Included only when the Design project has been built (build it on a
+           machine with UiPath Studio installed before packing). -->
+      <BuildOutputInPackage Include="$(_DesignDll)" Condition="Exists('$(_DesignDll)')" />
+    </ItemGroup>
+  </Target>
+
+</Project>

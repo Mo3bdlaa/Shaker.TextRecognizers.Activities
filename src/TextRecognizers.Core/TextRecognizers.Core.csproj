@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <AssemblyName>TextRecognizers.Core</AssemblyName>
+    <RootNamespace>TextRecognizers.Core</RootNamespace>
+    <Description>Shared foundation for the Text Recognizers activity suite: the base UiPath activity, the language drop-down (CultureOption) and common helpers.</Description>
+
+    <!-- Core is NOT published as its own package. Its DLL is embedded directly into each
+         domain activity package (TextRecognizers.*.Activities) so every package is fully
+         self-contained, with no separate Core dependency to install. -->
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- UiPath's CoreWF fork (package id "System.Activities"). Provides the modern
+         .NET workflow base types - CodeActivity, InArgument<T>, OutArgument<T>,
+         CodeActivityContext, [RequiredArgument], etc. - in the System.Activities
+         namespace. It is lean (only depends on Nito.AsyncEx) and is the SAME assembly
+         the Studio/Robot host supplies at run time, so it is a compile-time reference
+         only: PrivateAssets="all" keeps it from being bundled or forced onto consumers. -->
+    <PackageReference Include="System.Activities" Version="5.0.0-20210730-02" PrivateAssets="all" />
+  </ItemGroup>
+
+</Project>

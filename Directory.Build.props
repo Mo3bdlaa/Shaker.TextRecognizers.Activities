@@ -1,0 +1,49 @@
+<Project>
+
+  <!--
+    ============================================================================
+    Shared MSBuild settings for every project in the Text Recognizers suite.
+    Centralising them here keeps the target framework, language version and package
+    identity identical across Core and all of the domain activity packages.
+    ============================================================================
+  -->
+  <PropertyGroup>
+
+    <!-- All activity packages target the modern UiPath (.NET 6) Windows runtime.
+         A net6.0 assembly also loads cleanly inside newer .NET 8 Studio/Robot hosts,
+         so this single target covers current modern Studio. -->
+    <TargetFramework>net6.0-windows</TargetFramework>
+
+    <!-- Lets us build Windows-specific target frameworks with only the .NET SDK
+         installed (no full Visual Studio / desktop targeting pack required). -->
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
+
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+
+    <!-- Explicit `using` directives in every file so each one documents its own
+         dependencies (helpful for a library meant to be read and learned from). -->
+    <ImplicitUsings>disable</ImplicitUsings>
+
+    <!-- Emit the XML documentation file. The triple-slash doc-comments throughout
+         the code then surface as hover tooltips inside Studio's expression editor. -->
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+
+    <!-- CS1591: "missing XML comment" - informational only, never fail the build.
+         CS8618: non-nullable activity arguments are injected by the workflow runtime,
+                 not by a constructor, so the nullable analyser cannot see them set. -->
+    <NoWarn>$(NoWarn);CS1591;CS8618</NoWarn>
+
+    <!-- ===================== Shared package identity ===================== -->
+    <Product>Text Recognizers</Product>
+    <Authors>Mohammed Shaker</Authors>
+    <Company>Mohammed Shaker</Company>
+    <Version>1.0.0</Version>
+    <Copyright>Copyright (c) Mohammed Shaker</Copyright>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://mohammedshaker.com</PackageProjectUrl>
+    <PackageTags>UiPath;RPA;Activities;Microsoft.Recognizers;NLP;TextParsing</PackageTags>
+
+  </PropertyGroup>
+
+</Project>

@@ -1,0 +1,68 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <PackageId>TextRecognizers.DateTime.Activities</PackageId>
+    <AssemblyName>TextRecognizers.DateTime.Activities</AssemblyName>
+
+    <!-- The package/assembly is named ".DateTime." because that reads best for users in
+         Studio's package manager. The C# namespace, however, is deliberately PLURALISED
+         ("DateTimes") so that writing `DateTime` inside this code resolves to
+         System.DateTime rather than colliding with a namespace segment named "DateTime". -->
+    <RootNamespace>TextRecognizers.DateTimes</RootNamespace>
+
+    <Description>Ready-to-use UiPath activities that recognise and parse dates, times, ranges, durations and recurrences from natural-language text, plus business-date helpers (working days, holidays, configurable weekends). Powered by Microsoft.Recognizers.Text and fully offline.</Description>
+
+    <!-- ===== Offline / airgapped packaging =====
+         CopyLocalLockFileAssemblies brings the NuGet runtime assets (incl. the recognizer
+         DLLs) into the build output so the target below can embed them into the .nupkg.
+         The package then installs with no external NuGet restore. -->
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);IncludeRecognizerAssembliesInPackage</TargetsForTfmSpecificBuildOutput>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Shared base activity, language drop-down and helpers. PrivateAssets="all" keeps Core
+         from being declared as a NuGet dependency; its DLL is embedded directly into this
+         package by the target below, so the package is fully self-contained. -->
+    <ProjectReference Include="..\TextRecognizers.Core\TextRecognizers.Core.csproj" PrivateAssets="all" />
+
+    <!-- The workflow base types (System.Activities namespace). Referenced directly
+         because Core marks it PrivateAssets and therefore does not flow it onwards.
+         Compile-time only - provided by the Studio/Robot host at run time. -->
+    <PackageReference Include="System.Activities" Version="5.0.0-20210730-02" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- The recognition engine. Pure, grammar-based and entirely offline: it makes no
+         network calls and downloads no models. PrivateAssets="all" keeps it (and its
+         Microsoft.Recognizers.* dependencies) from being declared as external NuGet
+         dependencies of this package - instead the DLLs are embedded directly (target below). -->
+    <PackageReference Include="Microsoft.Recognizers.Text.DateTime" Version="1.8.13" PrivateAssets="all" />
+  </ItemGroup>
+
+  <!-- Embeds the full runtime closure into lib/<tfm>/ of the package so the single .nupkg is
+       fully self-contained and airgapped-installable. We embed the Microsoft.Recognizers.* engine
+       DLLs, the Microsoft.Extensions.* (caching) DLLs they depend on, and TextRecognizers.Core.dll
+       (the shared base). System.Activities + Nito.* (the workflow runtime) are intentionally NOT
+       embedded - the Studio/Robot host supplies them at run time.
+       DependsOnTargets="ResolveReferences" guarantees ReferenceCopyLocalPaths is populated. -->
+  <Target Name="IncludeRecognizerAssembliesInPackage" DependsOnTargets="ResolveReferences">
+    <PropertyGroup>
+      <_DesignDll>$(MSBuildThisFileDirectory)..\TextRecognizers.DateTime.Activities.Design\bin\$(Configuration)\$(TargetFramework)\TextRecognizers.DateTime.Activities.Design.dll</_DesignDll>
+    </PropertyGroup>
+    <ItemGroup>
+      <BuildOutputInPackage Include="@(ReferenceCopyLocalPaths)"
+                            Condition="$([System.String]::Copy('%(FileName)').StartsWith('Microsoft.Recognizers')) Or $([System.String]::Copy('%(FileName)').StartsWith('Microsoft.Extensions')) Or $([System.String]::Copy('%(FileName)').StartsWith('TextRecognizers.Core'))" />
+      <!-- Studio-only design assembly (icons). Lives beside the runtime DLL in lib/<tfm>/; the
+           robot never loads it because nothing in the runtime references it. Included only when
+           the Design project has been built (build the solution before packing). -->
+      <BuildOutputInPackage Include="$(_DesignDll)" Condition="Exists('$(_DesignDll)')" />
+    </ItemGroup>
+  </Target>
+
+</Project>

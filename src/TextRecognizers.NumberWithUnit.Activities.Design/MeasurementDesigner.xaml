@@ -1,0 +1,27 @@
+<sap:ActivityDesigner x:Class="TextRecognizers.Units.Design.MeasurementDesigner"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:sap="clr-namespace:System.Activities.Presentation;assembly=System.Activities.Presentation">
+    <sap:ActivityDesigner.Icon>
+        <DrawingBrush Stretch="Uniform">
+            <DrawingBrush.Drawing>
+                <!-- A ruler glyph for the Measurement (value + unit) activities. -->
+                <GeometryDrawing>
+                    <GeometryDrawing.Pen>
+                        <Pen Brush="#5B5BD6" Thickness="2" LineJoin="Round" StartLineCap="Round" EndLineCap="Round"/>
+                    </GeometryDrawing.Pen>
+                    <GeometryDrawing.Geometry>
+                        <GeometryGroup>
+                            <RectangleGeometry Rect="2,8,20,8" RadiusX="1.5" RadiusY="1.5"/>
+                            <LineGeometry StartPoint="6,8" EndPoint="6,12"/>
+                            <LineGeometry StartPoint="10,8" EndPoint="10,13"/>
+                            <LineGeometry StartPoint="14,8" EndPoint="14,12"/>
+                            <LineGeometry StartPoint="18,8" EndPoint="18,13"/>
+                        </GeometryGroup>
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+            </DrawingBrush.Drawing>
+        </DrawingBrush>
+    </sap:ActivityDesigner.Icon>
+    <Grid Margin="2" MinWidth="160" MinHeight="20"/>
+</sap:ActivityDesigner>

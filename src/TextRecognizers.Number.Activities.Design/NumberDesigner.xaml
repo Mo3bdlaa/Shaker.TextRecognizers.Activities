@@ -1,0 +1,26 @@
+<sap:ActivityDesigner x:Class="TextRecognizers.Numbers.Design.NumberDesigner"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:sap="clr-namespace:System.Activities.Presentation;assembly=System.Activities.Presentation">
+    <sap:ActivityDesigner.Icon>
+        <DrawingBrush Stretch="Uniform">
+            <DrawingBrush.Drawing>
+                <!-- A hash (#) glyph for the Number activities. -->
+                <GeometryDrawing>
+                    <GeometryDrawing.Pen>
+                        <Pen Brush="#5B5BD6" Thickness="2" LineJoin="Round" StartLineCap="Round" EndLineCap="Round"/>
+                    </GeometryDrawing.Pen>
+                    <GeometryDrawing.Geometry>
+                        <GeometryGroup>
+                            <LineGeometry StartPoint="9,4" EndPoint="7,20"/>
+                            <LineGeometry StartPoint="17,4" EndPoint="15,20"/>
+                            <LineGeometry StartPoint="4,9" EndPoint="20,9"/>
+                            <LineGeometry StartPoint="4,15" EndPoint="20,15"/>
+                        </GeometryGroup>
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+            </DrawingBrush.Drawing>
+        </DrawingBrush>
+    </sap:ActivityDesigner.Icon>
+    <Grid Margin="2" MinWidth="160" MinHeight="20"/>
+</sap:ActivityDesigner>

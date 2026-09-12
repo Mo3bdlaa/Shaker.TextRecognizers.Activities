@@ -1,0 +1,42 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <PackageId>TextRecognizers.Choice.Activities</PackageId>
+    <AssemblyName>TextRecognizers.Choice.Activities</AssemblyName>
+    <RootNamespace>TextRecognizers.Choices</RootNamespace>
+    <Description>Ready-to-use UiPath activities that recognise boolean (yes / no) answers in natural-language text. Powered by Microsoft.Recognizers.Text and fully offline.</Description>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);IncludeRecognizerAssembliesInPackage</TargetsForTfmSpecificBuildOutput>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TextRecognizers.Core\TextRecognizers.Core.csproj" PrivateAssets="all" />
+    <PackageReference Include="System.Activities" Version="5.0.0-20210730-02" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Recognizers.Text.Choice" Version="1.8.13" PrivateAssets="all" />
+  </ItemGroup>
+
+  <!-- Embeds the recognizer's runtime closure into the package (offline / airgapped). -->
+  <Target Name="IncludeRecognizerAssembliesInPackage" DependsOnTargets="ResolveReferences">
+    <PropertyGroup>
+      <_DesignDll>$(MSBuildThisFileDirectory)..\TextRecognizers.Choice.Activities.Design\bin\$(Configuration)\$(TargetFramework)\TextRecognizers.Choice.Activities.Design.dll</_DesignDll>
+    </PropertyGroup>
+    <ItemGroup>
+      <BuildOutputInPackage Include="@(ReferenceCopyLocalPaths)"
+                            Condition="$([System.String]::Copy('%(FileName)').StartsWith('Microsoft.Recognizers')) Or $([System.String]::Copy('%(FileName)').StartsWith('Microsoft.Extensions')) Or $([System.String]::Copy('%(FileName)').StartsWith('TextRecognizers.Core'))" />
+      <!-- Studio-only design assembly (panel icons). Lives beside the runtime DLL in lib/<tfm>/; the
+           robot never loads it. Included only when the Design project has been built (build it on a
+           machine with UiPath Studio installed before packing). -->
+      <BuildOutputInPackage Include="$(_DesignDll)" Condition="Exists('$(_DesignDll)')" />
+    </ItemGroup>
+  </Target>
+
+</Project>
