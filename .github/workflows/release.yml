@@ -25,6 +25,11 @@ on:
         description: 'Version tag to release, e.g. v1.0.0. The tag is created at the checked-out commit if it does not already exist.'
         required: true
         default: 'v1.0.0'
+      replace_existing:
+        description: 'Delete an existing release with this tag (and the tag itself) before publishing. Destructive - leave unchecked unless you mean to replace a release.'
+        required: false
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -66,6 +71,21 @@ jobs:
         run: |
           $tag = if ('${{ github.event_name }}' -eq 'workflow_dispatch') { '${{ inputs.version }}' } else { '${{ github.ref_name }}' }
           "TAG=$tag" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+        shell: pwsh
+
+      # Opt-in only: gh release create fails outright if the tag is already taken, so
+      # replacing a release has to be deliberate rather than a silent overwrite.
+      - name: Delete the existing release
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.replace_existing }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if (gh release view "$env:TAG" 2>$null) {
+            gh release delete "$env:TAG" --yes --cleanup-tag
+            "Deleted the existing release $env:TAG and its tag."
+          } else {
+            "No existing release $env:TAG to delete."
+          }
         shell: pwsh
 
       - name: Publish the release
