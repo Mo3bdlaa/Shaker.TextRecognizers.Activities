@@ -1,0 +1,64 @@
+name: Release
+
+# Builds, tests and packs the activity suite, then publishes the packages as a
+# GitHub Release.
+#
+# Triggered by pushing a version tag (e.g. `git tag v1.0.0 && git push origin v1.0.0`),
+# or manually from the Actions tab.
+#
+# Runs on Windows because every project targets net6.0-windows.
+#
+# NOTE ON STUDIO ICONS: the `*.Activities.Design` assemblies resolve their WPF
+# references from a local UiPath Studio install (see docs/studio-design-assembly.md).
+# Studio is not present on a hosted runner, so packages produced here work fully but
+# carry no per-activity panel icons - the `Exists(...)` condition in each runtime
+# .csproj simply finds no design DLL to embed. To publish icon-complete packages,
+# build on a machine with Studio and upload those .nupkg files to the release.
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: windows-latest
+
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          # 10.0.x builds the solution (the .slnx format needs a recent SDK);
+          # 6.0.x supplies the net6.0-windows runtime the tests execute against.
+          dotnet-version: |
+            6.0.x
+            10.0.x
+
+      - name: Restore
+        run: dotnet restore TextRecognizers.slnx
+
+      - name: Build
+        run: dotnet build TextRecognizers.slnx -c Release --no-restore
+
+      - name: Test
+        run: dotnet test tests/TextRecognizers.Tests/TextRecognizers.Tests.csproj -c Release --no-build
+
+      - name: Pack
+        run: dotnet pack TextRecognizers.slnx -c Release -o build/packages --no-build
+
+      - name: Publish the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: >
+          gh release create "${{ github.ref_name }}"
+          (Get-ChildItem build/packages/*.nupkg).FullName
+          --title "Text Recognizers ${{ github.ref_name }}"
+          --notes-file CHANGELOG.md
+        shell: pwsh
