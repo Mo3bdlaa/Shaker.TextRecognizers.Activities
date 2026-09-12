@@ -22,11 +22,11 @@ boolean straight back.
 
 | Package | What it gives you | Status |
 |---|---|---|
-| `TextRecognizers.DateTime.Activities` | Dates, times, ranges, durations, recurrences **+ business-date math** | ✅ 1.0.0 |
-| `TextRecognizers.Number.Activities` | Numbers, ordinals, percentages | ✅ 1.0.0 |
-| `TextRecognizers.NumberWithUnit.Activities` | Currency, temperature, age, dimension | ✅ 1.0.0 |
-| `TextRecognizers.Sequence.Activities` | Phone, email, URL, IP, GUID, hashtag, mention | ✅ 1.0.0 |
-| `TextRecognizers.Choice.Activities` | Boolean (yes / no) | ✅ 1.0.0 |
+| `TextRecognizers.DateTime.Activities` | Dates, times, ranges, durations, recurrences | ✅ 2.0.0 |
+| `TextRecognizers.Number.Activities` | Numbers, ordinals, percentages | ✅ 2.0.0 |
+| `TextRecognizers.NumberWithUnit.Activities` | Currency, temperature, age, dimension | ✅ 2.0.0 |
+| `TextRecognizers.Sequence.Activities` | Phone, email, URL, IP, GUID, hashtag, mention | ✅ 2.0.0 |
+| `TextRecognizers.Choice.Activities` | Boolean (yes / no) | ✅ 2.0.0 |
 
 ## Quick start
 
@@ -47,8 +47,6 @@ Relative phrases such as *tomorrow* or *in 2 hours* are resolved against **Refer
 (defaults to now). Leave it empty unless you need a different anchor.
 
 ## DateTime activities
-
-### Recognition
 
 **Recognize Date/Time** — find *every* date/time mention in a string.
 
@@ -80,23 +78,6 @@ Relative phrases such as *tomorrow* or *in 2 hours* are resolved against **Refer
 | `Duration` | A `TimeSpan` (for durations). |
 | `IsRange`, `IsDuration`, `IsSet` | Quick branching flags. |
 | `Timex`, `Values` | Raw TIMEX3 and every candidate interpretation, for advanced use. |
-
-### Business dates
-
-Pure date math (no recognition). Every activity takes a **Weekend** preset
-(Saturday/Sunday default, **Friday/Saturday** for the Middle East, and others — or a custom
-day list) and an optional **Holidays** list (a `List<DateTime>`; times are ignored).
-
-| Activity | Inputs (besides Weekend / Holidays) | Result |
-|---|---|---|
-| **Is Business Day** | Date | `Boolean` |
-| **Is Weekend** | Date | `Boolean` |
-| **Is Holiday** | Date, Holidays | `Boolean` |
-| **Add Business Days** | Date, Business Days *(negative = backwards)* | `DateTime` |
-| **Next Business Day** | Date | `DateTime` |
-| **Previous Business Day** | Date | `DateTime` |
-| **Business Days Between** | Start Date, End Date | `Int32` *(inclusive, signed)* |
-| **Nth Business Day Of Month** | Year, Month, N *(1 = first, -1 = last)* | `DateTime` |
 
 ## Number, measurements, sequences & booleans
 

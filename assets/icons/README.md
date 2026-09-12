@@ -7,7 +7,6 @@ glyphs drawn with `stroke="currentColor"`, so they adapt to Studio's light/dark 
 |------|---------|
 | `calendar.svg` | Recognize Date/Time, and the DateTime category |
 | `clock.svg` | Parse Date/Time |
-| `business-day.svg` | the business-date activities (Is Business Day, Add Business Days, …) |
 
 ## Wiring them into Studio
 

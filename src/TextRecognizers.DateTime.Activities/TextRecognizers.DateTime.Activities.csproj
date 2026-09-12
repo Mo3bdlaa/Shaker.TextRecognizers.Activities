@@ -10,7 +10,7 @@
          System.DateTime rather than colliding with a namespace segment named "DateTime". -->
     <RootNamespace>TextRecognizers.DateTimes</RootNamespace>
 
-    <Description>Ready-to-use UiPath activities that recognise and parse dates, times, ranges, durations and recurrences from natural-language text, plus business-date helpers (working days, holidays, configurable weekends). Powered by Microsoft.Recognizers.Text and fully offline.</Description>
+    <Description>Ready-to-use UiPath activities that recognise and parse dates, times, ranges, durations and recurrences from natural-language text. Powered by Microsoft.Recognizers.Text and fully offline.</Description>
 
     <!-- ===== Offline / airgapped packaging =====
          CopyLocalLockFileAssemblies brings the NuGet runtime assets (incl. the recognizer

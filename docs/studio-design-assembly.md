@@ -11,7 +11,6 @@ hierarchy. So the panel groups them like this:
 ```
 TextRecognizers
 ├─ DateTimes                Recognize Date/Time, Parse Date/Time
-│  └─ Business              Is Business Day, Add Business Days, …
 ├─ Numbers                  Recognize Numbers, Parse Number
 ├─ Measurements             Recognize Measurements, Parse Measurement
 ├─ Sequences                Recognize Sequences, Parse Sequence
@@ -43,7 +42,6 @@ The little icon next to each activity in the panel comes from a **design assembl
 | Design assembly | Activities it decorates | Icon |
 |---|---|---|
 | `TextRecognizers.DateTime.Activities.Design` | Recognize/Parse Date/Time | calendar |
-| (same) | the 8 business-date activities | calendar-with-check |
 | `TextRecognizers.Number.Activities.Design` | Recognize/Parse Number | hash `#` |
 | `TextRecognizers.NumberWithUnit.Activities.Design` | Recognize/Parse Measurement | ruler |
 | `TextRecognizers.Sequence.Activities.Design` | Recognize/Parse Sequence | envelope |
@@ -79,4 +77,4 @@ The `assets/icons/*.svg` files are the same glyphs in source form, for reuse as 
 1. Run the two steps above.
 2. Add `build/packages` as a package source in Studio (Manage Packages → Settings).
 3. Install a package and confirm: activities appear under **TextRecognizers**, each shows its icon,
-   tooltips show on hover, and the **Language**/**Kind**/**Weekend** fields render as drop-downs.
+   tooltips show on hover, and the **Language**/**Kind** fields render as drop-downs.

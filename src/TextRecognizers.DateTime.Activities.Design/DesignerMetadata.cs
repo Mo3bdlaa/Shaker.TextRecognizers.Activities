@@ -19,16 +19,6 @@ namespace TextRecognizers.DateTimes.Design
             builder.AddCustomAttributes(typeof(RecognizeDateTime), new DesignerAttribute(typeof(DateTimeDesigner)));
             builder.AddCustomAttributes(typeof(ParseDateTime), new DesignerAttribute(typeof(DateTimeDesigner)));
 
-            // Business-date activities -> calendar-with-check icon.
-            builder.AddCustomAttributes(typeof(IsBusinessDay), new DesignerAttribute(typeof(BusinessDesigner)));
-            builder.AddCustomAttributes(typeof(IsWeekend), new DesignerAttribute(typeof(BusinessDesigner)));
-            builder.AddCustomAttributes(typeof(IsHoliday), new DesignerAttribute(typeof(BusinessDesigner)));
-            builder.AddCustomAttributes(typeof(AddBusinessDays), new DesignerAttribute(typeof(BusinessDesigner)));
-            builder.AddCustomAttributes(typeof(NextBusinessDay), new DesignerAttribute(typeof(BusinessDesigner)));
-            builder.AddCustomAttributes(typeof(PreviousBusinessDay), new DesignerAttribute(typeof(BusinessDesigner)));
-            builder.AddCustomAttributes(typeof(BusinessDaysBetween), new DesignerAttribute(typeof(BusinessDesigner)));
-            builder.AddCustomAttributes(typeof(NthBusinessDayOfMonth), new DesignerAttribute(typeof(BusinessDesigner)));
-
             MetadataStore.AddAttributeTable(builder.CreateTable());
         }
     }
