@@ -22,11 +22,11 @@ boolean straight back.
 
 | Package | What it gives you | Status |
 |---|---|---|
-| `TextRecognizers.DateTime.Activities` | Dates, times, ranges, durations, recurrences | ✅ 1.1.0 |
-| `TextRecognizers.Number.Activities` | Numbers, ordinals, percentages | ✅ 1.1.0 |
-| `TextRecognizers.NumberWithUnit.Activities` | Currency, temperature, age, dimension | ✅ 1.1.0 |
-| `TextRecognizers.Sequence.Activities` | Phone, email, URL, IP, GUID, hashtag, mention | ✅ 1.1.0 |
-| `TextRecognizers.Choice.Activities` | Boolean (yes / no) | ✅ 1.1.0 |
+| `TextRecognizers.DateTime.Activities` | Dates, times, ranges, durations, recurrences | ✅ 1.0.0 |
+| `TextRecognizers.Number.Activities` | Numbers, ordinals, percentages | ✅ 1.0.0 |
+| `TextRecognizers.NumberWithUnit.Activities` | Currency, temperature, age, dimension | ✅ 1.0.0 |
+| `TextRecognizers.Sequence.Activities` | Phone, email, URL, IP, GUID, hashtag, mention | ✅ 1.0.0 |
+| `TextRecognizers.Choice.Activities` | Boolean (yes / no) | ✅ 1.0.0 |
 
 ## Quick start
 

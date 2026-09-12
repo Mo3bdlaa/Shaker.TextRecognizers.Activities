@@ -4,27 +4,6 @@ All notable changes to the Text Recognizers activity suite are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and the project
 adheres to [Semantic Versioning](https://semver.org/).
 
-## [1.1.0] - 2026-09-12
-
-### Added
-- **Time Zone** input on **Recognize Date/Time** and **Parse Date/Time** - a drop-down
-  choosing whose *now* anchors relative phrases when **Reference Time** is left empty.
-  Defaults to **System Default** (the robot machine's own zone), and is ignored when
-  Reference Time is set, since that is already a concrete moment.
-
-  Entries are real geographic zones labelled with their standard offset, e.g.
-  `(UTC+02:00) Cairo`, so daylight saving is applied automatically:
-  `(UTC+00:00) London` anchors at UTC+00:00 in winter and UTC+01:00 in summer.
-  `(UTC+00:00) UTC` is there for a clock that never shifts. Half- and quarter-hour
-  offsets are covered (Kolkata +05:30, Kathmandu +05:45, Chatham +12:45).
-
-  Behaviour is unchanged for existing workflows: the default reads the machine clock,
-  exactly as before.
-
-- 39 unit tests (was 30), including daylight-saving behaviour checked from both sides of
-  the year and a check that every drop-down entry resolves against the machine's time
-  zone database.
-
 ## [1.0.0] - 2026-06-10
 
 First release. All five recognizer domains, fully offline.
@@ -41,6 +20,12 @@ First release. All five recognizer domains, fully offline.
     values, ranges, durations and recurrences.
   - Clear error when a language is not supported by the DateTime recognizer
     (Korean, Swedish and Bulgarian are not supported by this recognizer).
+  - **Time Zone** drop-down choosing whose *now* anchors relative phrases when
+    **Reference Time** is left empty; defaults to the machine's own zone. Entries are real
+    geographic zones labelled with their standard offset, e.g. `(UTC+02:00) Cairo`, so
+    daylight saving is applied automatically - `(UTC+00:00) London` anchors at UTC+00:00 in
+    winter and UTC+01:00 in summer. Half- and quarter-hour offsets are covered
+    (Kolkata +05:30, Kathmandu +05:45, Chatham +12:45).
 - **TextRecognizers.Number.Activities** — Recognize/Parse numbers, ordinals and percentages.
 - **TextRecognizers.NumberWithUnit.Activities** — Recognize/Parse currency, temperature,
   age and dimension (value + unit).
@@ -50,7 +35,6 @@ First release. All five recognizer domains, fully offline.
   confidence score.
 - Fully **offline / airgapped** packaging: the Microsoft.Recognizers engine DLLs are
   embedded in each package, so a single `.nupkg` installs with no external restore.
-- 30 unit tests across all five domains, run through WorkflowInvoker.
+- 39 unit tests across all five domains, run through WorkflowInvoker.
 
-[1.1.0]: https://mohammedshaker.com
 [1.0.0]: https://mohammedshaker.com
