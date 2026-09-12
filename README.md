@@ -22,11 +22,11 @@ boolean straight back.
 
 | Package | What it gives you | Status |
 |---|---|---|
-| `TextRecognizers.DateTime.Activities` | Dates, times, ranges, durations, recurrences | ✅ 1.0.0 |
-| `TextRecognizers.Number.Activities` | Numbers, ordinals, percentages | ✅ 1.0.0 |
-| `TextRecognizers.NumberWithUnit.Activities` | Currency, temperature, age, dimension | ✅ 1.0.0 |
-| `TextRecognizers.Sequence.Activities` | Phone, email, URL, IP, GUID, hashtag, mention | ✅ 1.0.0 |
-| `TextRecognizers.Choice.Activities` | Boolean (yes / no) | ✅ 1.0.0 |
+| `TextRecognizers.DateTime.Activities` | Dates, times, ranges, durations, recurrences | ✅ 1.1.0 |
+| `TextRecognizers.Number.Activities` | Numbers, ordinals, percentages | ✅ 1.1.0 |
+| `TextRecognizers.NumberWithUnit.Activities` | Currency, temperature, age, dimension | ✅ 1.1.0 |
+| `TextRecognizers.Sequence.Activities` | Phone, email, URL, IP, GUID, hashtag, mention | ✅ 1.1.0 |
+| `TextRecognizers.Choice.Activities` | Boolean (yes / no) | ✅ 1.1.0 |
 
 ## Quick start
 
@@ -46,6 +46,13 @@ Parse Date/Time
 Relative phrases such as *tomorrow* or *in 2 hours* are resolved against **Reference Time**
 (defaults to now). Leave it empty unless you need a different anchor.
 
+**Time Zone** picks *whose* now that is — useful when the robot runs in one region but reads
+text written in another. It defaults to **System Default**, the robot machine's own zone, and
+is ignored when Reference Time is set (that is already a concrete moment). Entries are real
+zones shown with their standard offset, e.g. `(UTC+02:00) Cairo`, so daylight saving is applied
+for you: `(UTC+00:00) London` anchors at UTC+00:00 in winter and UTC+01:00 in summer. Pick
+`(UTC+00:00) UTC` for a clock that never shifts.
+
 ## DateTime activities
 
 **Recognize Date/Time** — find *every* date/time mention in a string.
@@ -55,6 +62,7 @@ Relative phrases such as *tomorrow* or *in 2 hours* are resolved against **Refer
 | In | Text | `String` | *Required.* The text to scan. |
 | In | Language | `CultureOption` | Drop-down; default English. |
 | In | Reference Time | `DateTime` | Anchor for relative phrases; default now. |
+| In | Time Zone | `TimeZoneOption` | Drop-down; whose *now* to use. Default: this machine. |
 | Out | Matches | `List<DateTimeRecognitionResult>` | One per mention, in order. |
 | Out | Has Matches | `Boolean` | |
 | Out | Matches (Table) | `DataTable` | Same data for `For Each Row`. |
@@ -63,7 +71,7 @@ Relative phrases such as *tomorrow* or *in 2 hours* are resolved against **Refer
 
 | Direction | Name | Type | Notes |
 |---|---|---|---|
-| In | Text / Language / Reference Time | — | As above. |
+| In | Text / Language / Reference Time / Time Zone | — | As above. |
 | Out | Success | `Boolean` | True when something was found. |
 | Out | Result | `DateTimeRecognitionResult` | Null when nothing was found. |
 
