@@ -20,6 +20,11 @@ on:
     tags:
       - 'v*'
   workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version tag to release, e.g. v1.0.0. The tag is created at the checked-out commit if it does not already exist.'
+        required: true
+        default: 'v1.0.0'
 
 permissions:
   contents: write
@@ -53,12 +58,20 @@ jobs:
       - name: Pack
         run: dotnet pack TextRecognizers.slnx -c Release -o build/packages --no-build
 
+      # On a tag push the tag is github.ref_name; on a manual run it comes from the
+      # input above. `gh release create` creates the tag at this commit if needed.
+      - name: Resolve the version tag
+        run: |
+          $tag = if ('${{ github.event_name }}' -eq 'workflow_dispatch') { '${{ inputs.version }}' } else { '${{ github.ref_name }}' }
+          "TAG=$tag" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+        shell: pwsh
+
       - name: Publish the release
         env:
           GH_TOKEN: ${{ github.token }}
         run: >
-          gh release create "${{ github.ref_name }}"
+          gh release create "$env:TAG"
           (Get-ChildItem build/packages/*.nupkg).FullName
-          --title "Text Recognizers ${{ github.ref_name }}"
+          --title "Text Recognizers $env:TAG"
           --notes-file CHANGELOG.md
         shell: pwsh
