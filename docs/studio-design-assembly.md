@@ -19,20 +19,16 @@ TextRecognizers
 
 No design assembly is needed for this — it is pure metadata that Studio reads from the activity.
 
-## ◻️ Package icon — one line to add (optional)
+## ✅ Package icon — already done
 
-To give a package its own icon in **Manage Packages**, drop a PNG in the project and reference it:
+Every package carries its own icon in **Manage Packages**: a 128×128 `icon.png` sits in
+each activity project and is declared with `<PackageIcon>`, so it is packed into the
+`.nupkg` and shows beside the package in Studio.
 
-```xml
-<PropertyGroup>
-  <PackageIcon>icon.png</PackageIcon>
-</PropertyGroup>
-<ItemGroup>
-  <None Include="icon.png" Pack="true" PackagePath="\" />
-</ItemGroup>
-```
-
-The source glyphs live in `assets/icons/*.svg`; export one to a 128×128 PNG per package.
+Each package uses the same glyph its activities carry in the panel, so a package and its
+activities read as one set. The PNGs are generated from `assets/icons/*.svg` by
+`tools/render-package-icons.py` — edit a glyph, re-run it, and every package icon
+refreshes. See [assets/icons/README.md](../assets/icons/README.md).
 
 ## ✅ Per-activity icons in the panel — design assemblies (one per domain)
 

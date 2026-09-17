@@ -19,10 +19,16 @@
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);IncludeRecognizerAssembliesInPackage</TargetsForTfmSpecificBuildOutput>
     <PackageReadmeFile>README.md</PackageReadmeFile>
+
+    <!-- Shown beside the package in Studio's Manage Packages. The glyph is the
+         same one this domain's activities carry in the panel; the source vector
+         lives in assets/icons/. -->
+    <PackageIcon>icon.png</PackageIcon>
   </PropertyGroup>
 
   <ItemGroup>
     <None Include="README.md" Pack="true" PackagePath="\" />
+    <None Include="icon.png" Pack="true" PackagePath="\" />
   </ItemGroup>
 
   <ItemGroup>
