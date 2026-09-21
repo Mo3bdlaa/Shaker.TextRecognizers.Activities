@@ -18,17 +18,15 @@ work, but every per-activity icon is missing, because the embed is guarded by an
 
 ```powershell
 # on the Studio machine
-Get-ChildItem src -Recurse -Filter *.Design.csproj |
-  ForEach-Object { dotnet build $_.FullName -c Release }
-
+dotnet build src/Shaker.TextRecognizers.Activities.Design/Shaker.TextRecognizers.Activities.Design.csproj -c Release
 dotnet pack Shaker.TextRecognizers.slnx -c Release -o build/packages
 ```
 
 Then confirm the design assembly actually made it in:
 
 ```powershell
-# should list Shaker.TextRecognizers.Activities.DateTime.Design.dll
-Expand-Archive build/packages/Shaker.TextRecognizers.Activities.DateTime.1.0.0.nupkg -DestinationPath tmp
+# should list Shaker.TextRecognizers.Activities.Design.dll
+Expand-Archive build/packages/Shaker.TextRecognizers.Activities.1.0.0.nupkg -DestinationPath tmp
 Get-ChildItem tmp/lib -Recurse -Filter *.Design.dll
 ```
 
@@ -38,17 +36,12 @@ render as drop-downs with readable labels.
 
 ---
 
-## One listing or five?
+## One listing
 
-The suite is five independent packages. Two workable shapes:
-
-- **Five listings**, one per package — each is separately installable and separately
-  searchable, which is how a user actually consumes them. More submissions to maintain.
-- **One listing** for the suite, with the DateTime package as the primary file — simpler to
-  maintain, but users searching for "email extraction" are less likely to find it.
-
-Five listings matches how the packages ship. The copy below is written for one package at a
-time; swap the bracketed bits per package.
+The suite ships as a single package, `Shaker.TextRecognizers.Activities`, so this is one
+listing with one file. The activities group themselves by domain in the panel
+(DateTimes, Numbers, Measurements, Sequences, Choices), so a user installs once and gets
+all five groups.
 
 ---
 
@@ -57,16 +50,13 @@ time; swap the bracketed bits per package.
 ### Listing title — 50 characters max
 
 ```
-Text Recognizers - Date/Time Activities
+Text Recognizers - Text to Typed Values
 ```
-
-Per package: `Text Recognizers - Number Activities`, `- Measurement Activities`,
-`- Sequence Activities`, `- Boolean Activities`.
 
 ### Card summary — 200 characters max
 
 ```
-Turns natural-language dates and times in text into real DateTime values, with a typed result per match. Grammar-based and fully offline - no network calls, no model downloads, no API keys.
+Turns natural-language text into typed values: dates, numbers, measurements, emails, yes/no answers. Grammar-based and fully offline - no network calls, no model downloads, no API keys.
 ```
 
 ### Tags — 5 max, 20 characters each, single words
@@ -74,6 +64,9 @@ Turns natural-language dates and times in text into real DateTime values, with a
 ```
 NLP   Parsing   DateTime   Offline   Recognizers
 ```
+
+`DateTime` is the highest-volume search term of the five domains; swap it if the listing
+should lead with another.
 
 ### Application
 
@@ -84,20 +77,24 @@ single mandatory application.
 ### Overview — 5,000 characters max
 
 > Instead of wrestling a `List<ModelResult>` and a loosely-typed resolution dictionary inside
-> Assign activities, you drag in one activity and get a real DateTime back.
+> Assign activities, you drag in one activity and get a real DateTime, Double or Boolean back.
 >
 > **What it does**
 >
-> Two activities cover the whole domain:
+> Ten activities in five groups. Every group pairs a **Recognize…** — every match in the
+> string, as a typed list plus a DataTable for For Each Row — with a **Parse…** — the single
+> best value plus a Success flag, the right shape for one cell or one field.
 >
-> - **Recognize Date/Time** finds every date/time mention in a string and returns a typed
->   list, a DataTable for For Each Row, and a Has Matches flag.
-> - **Parse Date/Time** extracts the single best value, with a Success flag — the right shape
->   for one cell, one field, one phrase.
->
-> Each result carries the matched text and its position, the subtype (Date, Time, DateTime,
-> DatePeriod, TimePeriod, DateTimePeriod, Duration, Set), the point value, range start/end,
-> duration, the raw TIMEX expression, and every candidate interpretation for advanced use.
+> - **DateTimes** — dates, times, ranges, durations and recurrences. Results carry the point
+>   value, range start/end, duration, subtype, the raw TIMEX expression, and the matched text
+>   with its position.
+> - **Numbers** — Number (including decimals and fractions, "two and a half" to 2.5), Ordinal
+>   and Percentage.
+> - **Measurements** — Currency, Temperature, Age and Dimension, returning the value and its
+>   unit separately.
+> - **Sequences** — Email, PhoneNumber, Url, IpAddress, Guid, Hashtag and Mention.
+> - **Choices** — yes/no answers with a confidence score, understanding far more than
+>   "yes"/"no": "sure", "absolutely", "nope", "I don't think so".
 >
 > **Fully offline**
 >
@@ -123,12 +120,6 @@ single mandatory application.
 > Every input and output has a tooltip, fixed choices are drop-downs that still accept
 > variables, required fields are flagged, and each activity carries its own panel icon.
 >
-> **The rest of the suite**
->
-> Number (numbers, ordinals, percentages) · NumberWithUnit (currency, temperature, age,
-> dimension) · Sequence (email, phone, URL, IP, GUID, hashtag, mention) · Choice (boolean
-> yes/no with a confidence score). Each is independent and self-contained.
->
 > Built on Microsoft.Recognizers.Text. MIT licensed.
 
 ---
@@ -137,7 +128,7 @@ single mandatory application.
 
 | Item | Value |
 |---|---|
-| Primary file | `Shaker.TextRecognizers.Activities.<Category>.1.0.0.nupkg` (Studio-built) |
+| Primary file | `Shaker.TextRecognizers.Activities.1.0.0.nupkg` (Studio-built) |
 | License | **MIT** — permissive, which the guidelines recommend for free listings |
 | Support | **Community Support** (best-effort, via the Marketplace forum) |
 | Terms of use | Must state licensing conditions and term, warranties, support, fees, and link a freely accessible privacy policy |
@@ -172,7 +163,7 @@ Publishing is not immediate. The Marketplace security certification runs in stag
 
 | Requirement | Status |
 |---|---|
-| `CompanyName.{PackageName}` naming | `Shaker.TextRecognizers.Activities.<Category>` |
+| `CompanyName.{PackageName}` naming | `Shaker.TextRecognizers.Activities` |
 | Author, description, tags, license in metadata | present (MIT) |
 | Package icon | present, 128×128, original artwork |
 | Every activity has at least one output | all ten do |

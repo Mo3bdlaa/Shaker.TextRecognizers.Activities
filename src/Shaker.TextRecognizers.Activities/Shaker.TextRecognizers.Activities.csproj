@@ -1,0 +1,71 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <PackageId>Shaker.TextRecognizers.Activities</PackageId>
+    <AssemblyName>Shaker.TextRecognizers.Activities</AssemblyName>
+
+    <!-- Each domain lives in its own folder and its own namespace (TextRecognizers.DateTimes,
+         .Numbers, .Units, .Sequences, .Choices), so there is no single root they all sit
+         under. Files declare their namespace explicitly; this only seeds new ones. -->
+    <RootNamespace>TextRecognizers</RootNamespace>
+
+    <Description>Ready-to-use UiPath activities that turn natural-language text into strongly-typed values: dates and times, numbers, measurements with units, emails and URLs, and yes/no answers. Grouped by domain in the activities panel. Powered by Microsoft.Recognizers.Text and fully offline - no network calls, no model downloads.</Description>
+
+    <!-- ===== Offline / airgapped packaging =====
+         CopyLocalLockFileAssemblies brings the NuGet runtime assets (incl. the recognizer
+         DLLs) into the build output so the target below can embed them into the .nupkg.
+         The package then installs with no external NuGet restore. -->
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);IncludeRecognizerAssembliesInPackage</TargetsForTfmSpecificBuildOutput>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+
+    <!-- Shown beside the package in Studio's Manage Packages. The source vector lives in
+         assets/icons/; tools/render-package-icons.py regenerates it. -->
+    <PackageIcon>icon.png</PackageIcon>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="\" />
+    <None Include="icon.png" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- The workflow base types (System.Activities namespace) - UiPath's CoreWF fork.
+         Compile-time only: the Studio/Robot host supplies the same assembly at run time,
+         so PrivateAssets keeps it from being bundled or forced onto consumers. -->
+    <PackageReference Include="System.Activities" Version="5.0.0-20210730-02" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- One recognizer package per domain. All pure, grammar-based and entirely offline:
+         no network calls, no model downloads. PrivateAssets="all" keeps them from being
+         declared as external NuGet dependencies - the DLLs are embedded directly (target
+         below), and they share a single copy of the large Definitions assembly. -->
+    <PackageReference Include="Microsoft.Recognizers.Text.DateTime" Version="1.8.13" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.Recognizers.Text.Number" Version="1.8.13" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.Recognizers.Text.NumberWithUnit" Version="1.8.13" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.Recognizers.Text.Sequence" Version="1.8.13" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.Recognizers.Text.Choice" Version="1.8.13" PrivateAssets="all" />
+  </ItemGroup>
+
+  <!-- Embeds the full runtime closure into lib/<tfm>/ of the package so the single .nupkg is
+       fully self-contained and airgapped-installable. We embed the Microsoft.Recognizers.*
+       engine DLLs and the Microsoft.Extensions.* (caching) DLLs they depend on.
+       System.Activities + Nito.* (the workflow runtime) are intentionally NOT embedded -
+       the Studio/Robot host supplies them at run time.
+       DependsOnTargets="ResolveReferences" guarantees ReferenceCopyLocalPaths is populated. -->
+  <Target Name="IncludeRecognizerAssembliesInPackage" DependsOnTargets="ResolveReferences">
+    <PropertyGroup>
+      <_DesignDll>$(MSBuildThisFileDirectory)..\Shaker.TextRecognizers.Activities.Design\bin\$(Configuration)\$(TargetFramework)\Shaker.TextRecognizers.Activities.Design.dll</_DesignDll>
+    </PropertyGroup>
+    <ItemGroup>
+      <BuildOutputInPackage Include="@(ReferenceCopyLocalPaths)"
+                            Condition="$([System.String]::Copy('%(FileName)').StartsWith('Microsoft.Recognizers')) Or $([System.String]::Copy('%(FileName)').StartsWith('Microsoft.Extensions'))" />
+      <!-- Studio-only design assembly (per-activity icons). Lives beside the runtime DLL in
+           lib/<tfm>/; the robot never loads it because nothing in the runtime references it.
+           Included only when the Design project has been built, which needs Studio installed. -->
+      <BuildOutputInPackage Include="$(_DesignDll)" Condition="Exists('$(_DesignDll)')" />
+    </ItemGroup>
+  </Target>
+
+</Project>

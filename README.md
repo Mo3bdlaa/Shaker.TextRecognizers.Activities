@@ -13,24 +13,29 @@ boolean straight back.
   [docs/airgapped-deployment.md](docs/airgapped-deployment.md).
 - **Friendly to use** — every input and output has a tooltip, fixed choices are drop-downs
   (but still accept variables), and required fields are flagged.
-- **One package per domain** — install only what you need; each is fully self-contained
-  (the shared `Core` is embedded inside every package, so there is no extra package to install).
+- **One package, grouped by domain** — a single install puts every activity in the panel under
+  its own group, and the recognition engine ships inside it, so there is nothing else to add.
 
 > Author: **Mohammed Shaker** · <https://mohammedshaker.com> · MIT licensed.
 
-## Packages
+## One package
 
-| Package | What it gives you | Status |
+Everything installs as a single package, with the activities grouped by domain in the
+activities panel.
+
+| Toolbox group | Activities | Kinds |
 |---|---|---|
-| `Shaker.TextRecognizers.Activities.DateTime` | Dates, times, ranges, durations, recurrences | ✅ 1.0.0 |
-| `Shaker.TextRecognizers.Activities.Number` | Numbers, ordinals, percentages | ✅ 1.0.0 |
-| `Shaker.TextRecognizers.Activities.NumberWithUnit` | Currency, temperature, age, dimension | ✅ 1.0.0 |
-| `Shaker.TextRecognizers.Activities.Sequence` | Phone, email, URL, IP, GUID, hashtag, mention | ✅ 1.0.0 |
-| `Shaker.TextRecognizers.Activities.Choice` | Boolean (yes / no) | ✅ 1.0.0 |
+| **DateTimes** | Recognize Date/Time · Parse Date/Time | dates, times, ranges, durations, recurrences |
+| **Numbers** | Recognize Numbers · Parse Number | Number, Ordinal, Percentage |
+| **Measurements** | Recognize Measurements · Parse Measurement | Currency, Temperature, Age, Dimension (value **+ unit**) |
+| **Sequences** | Recognize Sequences · Parse Sequence | Email, PhoneNumber, Url, IpAddress, Guid, Hashtag, Mention |
+| **Choices** | Recognize Booleans · Parse Boolean | yes / no (with a confidence score) |
+
+`Shaker.TextRecognizers.Activities` — ✅ 1.0.0
 
 ## Quick start
 
-1. Install **`Shaker.TextRecognizers.Activities.DateTime`** from your feed — it is fully self-contained,
+1. Install **`Shaker.TextRecognizers.Activities`** from your feed — it is fully self-contained,
    so there is nothing else to install. For airgapped feeds, see the [deployment guide](docs/airgapped-deployment.md).
 2. Drag **Parse Date/Time** onto the canvas.
 3. Set **Text** to the string you want to read, e.g. an email body or an Excel cell.
@@ -89,9 +94,9 @@ for you: `(UTC+00:00) London` anchors at UTC+00:00 in winter and UTC+01:00 in su
 
 ## Number, measurements, sequences & booleans
 
-The other domains follow the same shape — a **Recognize…** activity (all matches + `DataTable`)
+The other groups follow the same shape — a **Recognize…** activity (all matches + `DataTable`)
 and a **Parse…** activity (single best value + `Success`), with a **Kind** drop-down where it
-helps. See each package's own README for inputs, outputs and examples.
+helps. See the [package README](src/Shaker.TextRecognizers.Activities/README.md) for inputs, outputs and examples.
 
 | Package | Activities | Kinds |
 |---|---|---|
@@ -121,7 +126,7 @@ dotnet pack    Shaker.TextRecognizers.slnx -c Release -o build/packages
 ## Repository layout
 
 ```
-src/      Core (shared, embedded into each package) + one activity project per domain
+src/      the activity package, one folder per domain (+ Core, the shared base)
           + a Studio design assembly (per-activity panel icons)
 tests/    xUnit tests (run each activity through WorkflowInvoker, as Studio does)
 docs/     deployment + design notes

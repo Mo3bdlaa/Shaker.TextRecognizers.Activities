@@ -22,30 +22,30 @@ pulling a single value out of it.
 | `toggle.svg` | Recognize Booleans |
 | `check-circle.svg` | Parse Boolean |
 
-These ship as inline WPF `GeometryDrawing` inside each `*.Design` project - no image file is
+These ship as inline WPF `GeometryDrawing` inside the `*.Design` project - no image file is
 packaged for them. The SVG here is the source the WPF geometry mirrors; edit both together.
 
 ## Package icon
 
 | File | Used by |
 |------|---------|
-| `text-span.svg` | all five packages |
+| `text-span.svg` | the package |
 
-One mark for the whole suite - lines of text with a single span picked out, which is what the
-suite does - so the packages read as one set in Manage Packages. It is rendered to
-`src/<package>/icon.png` (128x128) and packed via `<PackageIcon>`:
+The suite mark - lines of text with a single span picked out, which is what the suite does.
+It is rendered to `src/Shaker.TextRecognizers.Activities/icon.png` (128x128) and packed via
+`<PackageIcon>`:
 
 ```
 pip install cairosvg
 python tools/render-package-icons.py
 ```
 
-Edit `text-span.svg` and re-run that to refresh every package icon at once. Swap in your own
+Edit `text-span.svg` and re-run that to refresh it. Swap in your own
 branded artwork anytime - keep the same file name and the wiring picks it up unchanged.
 
 ## Wiring them into Studio
 
 UiPath renders activity/toolbox icons through a **design assembly** (a `*.Design` project).
 That visual result can only be verified inside an actual UiPath Studio, so the design
-assemblies are built and validated as a dedicated pass - see
+assembly is built and validated as a dedicated pass - see
 [../../docs/studio-design-assembly.md](../../docs/studio-design-assembly.md).

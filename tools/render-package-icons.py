@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
-"""Render the package icon shown beside each package in Studio's Manage Packages.
+"""Render the package icon shown beside the package in Studio's Manage Packages.
 
-All five packages share one mark - lines of text with a single span picked out, which
-is what the whole suite does - so they read as one suite in the package list. The
-per-activity icons are separate: each activity carries its own glyph, drawn inline in
-its *.Design project. assets/icons/ holds the vector source for both.
+The mark is lines of text with a single span picked out, which is what the suite does.
+The per-activity icons are separate: each activity carries its own glyph, drawn inline
+in the Design project. assets/icons/ holds the vector source for both.
 
     pip install cairosvg
     python tools/render-package-icons.py
@@ -24,16 +23,8 @@ INDIGO = "#5B5BD6"
 TINT = "#EEF0FD"
 SIZE = 128
 
-# The one mark every package carries.
 SUITE_GLYPH = "text-span"
-
-PACKAGES = [
-    "Shaker.TextRecognizers.Activities.DateTime",
-    "Shaker.TextRecognizers.Activities.Number",
-    "Shaker.TextRecognizers.Activities.NumberWithUnit",
-    "Shaker.TextRecognizers.Activities.Sequence",
-    "Shaker.TextRecognizers.Activities.Choice",
-]
+PACKAGE = "Shaker.TextRecognizers.Activities"
 
 
 def glyph_body(name):
@@ -53,13 +44,12 @@ def main():
   </g>
 </svg>"""
 
-    for package in PACKAGES:
-        out = ROOT / "src" / package / "icon.png"
-        cairosvg.svg2png(
-            bytestring=svg.encode(), write_to=str(out),
-            output_width=SIZE, output_height=SIZE,
-        )
-        print(f"{out.relative_to(ROOT)}  <- assets/icons/{SUITE_GLYPH}.svg")
+    out = ROOT / "src" / PACKAGE / "icon.png"
+    cairosvg.svg2png(
+        bytestring=svg.encode(), write_to=str(out),
+        output_width=SIZE, output_height=SIZE,
+    )
+    print(f"{out.relative_to(ROOT)}  <- assets/icons/{SUITE_GLYPH}.svg")
 
 
 if __name__ == "__main__":

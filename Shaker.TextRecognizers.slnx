@@ -1,11 +1,6 @@
 <Solution>
   <Folder Name="/src/">
-    <Project Path="src/Shaker.TextRecognizers.Activities.Choice/Shaker.TextRecognizers.Activities.Choice.csproj" />
-    <Project Path="src/Shaker.TextRecognizers.Core/Shaker.TextRecognizers.Core.csproj" />
-    <Project Path="src/Shaker.TextRecognizers.Activities.DateTime/Shaker.TextRecognizers.Activities.DateTime.csproj" />
-    <Project Path="src/Shaker.TextRecognizers.Activities.Number/Shaker.TextRecognizers.Activities.Number.csproj" />
-    <Project Path="src/Shaker.TextRecognizers.Activities.NumberWithUnit/Shaker.TextRecognizers.Activities.NumberWithUnit.csproj" />
-    <Project Path="src/Shaker.TextRecognizers.Activities.Sequence/Shaker.TextRecognizers.Activities.Sequence.csproj" />
+    <Project Path="src/Shaker.TextRecognizers.Activities/Shaker.TextRecognizers.Activities.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Shaker.TextRecognizers.Tests/Shaker.TextRecognizers.Tests.csproj" />

@@ -21,59 +21,60 @@ No design assembly is needed for this — it is pure metadata that Studio reads 
 
 ## ✅ Package icon — already done
 
-Every package carries its own icon in **Manage Packages**: a 128×128 `icon.png` sits in
-each activity project and is declared with `<PackageIcon>`, so it is packed into the
-`.nupkg` and shows beside the package in Studio.
+The package carries an icon in **Manage Packages**: a 128×128 `icon.png` declared with
+`<PackageIcon>`, so it is packed into the `.nupkg` and shows beside the package in Studio.
 
-Each package uses the same glyph its activities carry in the panel, so a package and its
-activities read as one set. The PNGs are generated from `assets/icons/*.svg` by
-`tools/render-package-icons.py` — edit a glyph, re-run it, and every package icon
-refreshes. See [assets/icons/README.md](../assets/icons/README.md).
+It is generated from `assets/icons/text-span.svg` by `tools/render-package-icons.py` — edit
+the glyph, re-run it, and the icon refreshes. See
+[assets/icons/README.md](../assets/icons/README.md).
 
-## ✅ Per-activity icons in the panel — design assemblies (one per domain)
+## ✅ Per-activity icons in the panel — one design assembly
 
 The little icon next to each activity in the panel comes from a **design assembly**
-(`*.Activities.Design`) that renders a WPF `ActivityDesigner.Icon`. Every activity has its own:
+(`Shaker.TextRecognizers.Activities.Design`) that renders a WPF `ActivityDesigner.Icon`.
+Every activity has its own:
 
-| Activity | Icon | Design assembly |
-|---|---|---|
-| Recognize Date/Time | calendar | `Shaker.TextRecognizers.Activities.DateTime.Design` |
-| Parse Date/Time | clock | (same) |
-| Recognize Numbers | hash `#` | `Shaker.TextRecognizers.Activities.Number.Design` |
-| Parse Number | numeral `1` | (same) |
-| Recognize Measurements | ruler | `Shaker.TextRecognizers.Activities.NumberWithUnit.Design` |
-| Parse Measurement | gauge | (same) |
-| Recognize Sequences | envelope | `Shaker.TextRecognizers.Activities.Sequence.Design` |
-| Parse Sequence | link | (same) |
-| Recognize Booleans | toggle | `Shaker.TextRecognizers.Activities.Choice.Design` |
-| Parse Boolean | check in a circle | (same) |
+| Activity | Icon |
+|---|---|
+| Recognize Date/Time | calendar |
+| Parse Date/Time | clock |
+| Recognize Numbers | hash `#` |
+| Parse Number | numeral `1` |
+| Recognize Measurements | ruler |
+| Parse Measurement | gauge |
+| Recognize Sequences | envelope |
+| Parse Sequence | link |
+| Recognize Booleans | toggle |
+| Parse Boolean | check in a circle |
+
+The designer classes live in one folder per domain inside the design project, mirroring the
+activity package's own layout.
 
 Each activity has its own designer class, so **Recognize** and **Parse** are told apart at a
 glance: the Recognize icon stands for the whole domain, and the Parse icon for pulling one
 value out of it.
 
-Each assembly is a `net6.0-windows` `<UseWPF>` project that references its activities project and
+The assembly is a `net6.0-windows` `<UseWPF>` project that references the activity project and
 the WF presentation assemblies (resolved from the local UiPath Studio install via
-`UiPathStudioDir`). Icons are inline `DrawingBrush` vector geometry — no image files to ship. The
-designers are registered through an `IRegisterMetadata` (`DesignerMetadata.cs`) that Studio
-discovers automatically.
+`UiPathStudioDir`). Icons are inline `DrawingBrush` vector geometry — no image files to ship. All
+ten designers are registered through a single `IRegisterMetadata` (`DesignerMetadata.cs`) that
+Studio discovers automatically.
 
-### Building (the design assemblies are not in the solution)
-The `*.Design` projects are kept **out of `Shaker.TextRecognizers.slnx`** so the main build/test/pack
-works on machines without Studio. Build them once on a machine that has UiPath Studio installed,
-then pack — each domain package picks up its `*.Design.dll` automatically (the runtime `.csproj`
-embeds it next to the runtime DLL via an `Exists(...)` condition):
+### Building (the design assembly is not in the solution)
+The `*.Design` project is kept **out of `Shaker.TextRecognizers.slnx`** so the main build/test/pack
+works on machines without Studio. Build it once on a machine that has UiPath Studio installed,
+then pack — the package picks up `Shaker.TextRecognizers.Activities.Design.dll` automatically
+(the runtime `.csproj` embeds it next to the runtime DLL via an `Exists(...)` condition):
 
 ```powershell
-# 1) build the design assemblies (requires UiPath Studio installed)
-Get-ChildItem src -Recurse -Filter *.Activities.Design.csproj |
-  ForEach-Object { dotnet build $_.FullName -c Release }
+# 1) build the design assembly (requires UiPath Studio installed)
+dotnet build src/Shaker.TextRecognizers.Activities.Design/Shaker.TextRecognizers.Activities.Design.csproj -c Release
 
-# 2) pack — the design DLLs are embedded into each .nupkg
+# 2) pack — the design DLL is embedded into the .nupkg
 dotnet pack Shaker.TextRecognizers.slnx -c Release -o build/packages
 ```
 
-If Studio is **not** installed, skip step 1: the packages still build and work, just without the
+If Studio is **not** installed, skip step 1: the package still builds and works, just without the
 per-activity panel icons (the `Exists(...)` condition simply finds no design DLL to embed).
 
 The `assets/icons/*.svg` files are the same glyphs in source form, for reuse as package icons or docs.
@@ -81,5 +82,5 @@ The `assets/icons/*.svg` files are the same glyphs in source form, for reuse as 
 ## How to validate in Studio
 1. Run the two steps above.
 2. Add `build/packages` as a package source in Studio (Manage Packages → Settings).
-3. Install a package and confirm: activities appear under **TextRecognizers**, each shows its icon,
+3. Install the package and confirm: activities appear under **TextRecognizers**, each shows its icon,
    tooltips show on hover, and the **Language**/**Kind** fields render as drop-downs.

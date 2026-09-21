@@ -21,7 +21,7 @@ package declares **no `<dependency>` entries** at all.
 Just **one file per domain** — the domain package itself:
 
 ```
-Shaker.TextRecognizers.Activities.DateTime.<version>.nupkg
+Shaker.TextRecognizers.Activities.<version>.nupkg
 ```
 
 The package has **no dependencies** to mirror: the recognizer engine and the shared core are

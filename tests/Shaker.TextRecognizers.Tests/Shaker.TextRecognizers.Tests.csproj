@@ -14,14 +14,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <!-- Core is referenced directly: the activity packages embed it but mark it PrivateAssets,
-         so it no longer flows transitively to consumers. -->
-    <ProjectReference Include="..\..\src\Shaker.TextRecognizers.Core\Shaker.TextRecognizers.Core.csproj" />
-    <ProjectReference Include="..\..\src\Shaker.TextRecognizers.Activities.DateTime\Shaker.TextRecognizers.Activities.DateTime.csproj" />
-    <ProjectReference Include="..\..\src\Shaker.TextRecognizers.Activities.Number\Shaker.TextRecognizers.Activities.Number.csproj" />
-    <ProjectReference Include="..\..\src\Shaker.TextRecognizers.Activities.NumberWithUnit\Shaker.TextRecognizers.Activities.NumberWithUnit.csproj" />
-    <ProjectReference Include="..\..\src\Shaker.TextRecognizers.Activities.Sequence\Shaker.TextRecognizers.Activities.Sequence.csproj" />
-    <ProjectReference Include="..\..\src\Shaker.TextRecognizers.Activities.Choice\Shaker.TextRecognizers.Activities.Choice.csproj" />
+    <!-- The whole suite is one package now; every domain lives in it. -->
+    <ProjectReference Include="..\..\src\Shaker.TextRecognizers.Activities\Shaker.TextRecognizers.Activities.csproj" />
   </ItemGroup>
 
 </Project>

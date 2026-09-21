@@ -9,9 +9,10 @@ adheres to [Semantic Versioning](https://semver.org/).
 First release. All five recognizer domains, fully offline.
 
 ### Added
-- **Shared core** — base activity, the `CultureOption` language drop-down (14 languages),
-  and common helpers, embedded directly into every domain package (not a separate package).
-- **Shaker.TextRecognizers.Activities.DateTime**
+- **One package**, `Shaker.TextRecognizers.Activities`, with the activities grouped by domain
+  in the panel. The shared base activity and the `CultureOption` language drop-down
+  (14 languages) live in it rather than in a package of their own.
+- **DateTimes**
   - **Recognize Date/Time** — finds every date/time mention in text; returns a typed list,
     a `DataTable`, and a "has matches" flag.
   - **Parse Date/Time** — extracts the single best date/time as a ready-to-use value,
@@ -26,15 +27,15 @@ First release. All five recognizer domains, fully offline.
     daylight saving is applied automatically - `(UTC+00:00) London` anchors at UTC+00:00 in
     winter and UTC+01:00 in summer. Half- and quarter-hour offsets are covered
     (Kolkata +05:30, Kathmandu +05:45, Chatham +12:45).
-- **Shaker.TextRecognizers.Activities.Number** — Recognize/Parse numbers, ordinals and percentages.
-- **Shaker.TextRecognizers.Activities.NumberWithUnit** — Recognize/Parse currency, temperature,
+- **Numbers** — Recognize/Parse numbers, ordinals and percentages.
+- **Measurements** — Recognize/Parse currency, temperature,
   age and dimension (value + unit).
-- **Shaker.TextRecognizers.Activities.Sequence** — Recognize/Parse emails, phone numbers, URLs,
+- **Sequences** — Recognize/Parse emails, phone numbers, URLs,
   IP addresses, GUIDs, hashtags and mentions.
-- **Shaker.TextRecognizers.Activities.Choice** — Recognize/Parse boolean (yes/no) answers with a
+- **Choices** — Recognize/Parse boolean (yes/no) answers with a
   confidence score.
 - Fully **offline / airgapped** packaging: the Microsoft.Recognizers engine DLLs are
-  embedded in each package, so a single `.nupkg` installs with no external restore.
+  embedded, so the single `.nupkg` installs with no external restore.
 - 39 unit tests across all five domains, run through WorkflowInvoker.
 
 [1.0.0]: https://mohammedshaker.com
