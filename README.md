@@ -115,12 +115,17 @@ package documents its own.)
 
 ## Build from source
 
-Requires the .NET SDK (built and tested with .NET 10; the packages target `net6.0-windows`).
+Requires the .NET SDK (built and tested with .NET 10). The package targets **`net6.0`** and
+**`net6.0-windows`**, so Studio resolves it for both *Windows* and *Cross-platform* projects;
+the WPF designers carrying the per-activity icons live in the Windows one.
 
 ```powershell
-dotnet build   Shaker.TextRecognizers.slnx -c Release
-dotnet test    tests/Shaker.TextRecognizers.Tests/Shaker.TextRecognizers.Tests.csproj
-dotnet pack    Shaker.TextRecognizers.slnx -c Release -o build/packages
+dotnet build Shaker.TextRecognizers.slnx -c Release
+dotnet test  tests/Shaker.TextRecognizers.Tests/Shaker.TextRecognizers.Tests.csproj
+
+# or just ./tools/pack-with-icons.ps1, which also verifies the result
+dotnet pack src/Shaker.TextRecognizers.Activities/Shaker.TextRecognizers.Activities.csproj `
+  -c Release -o build/packages --no-build -p:RequireDesignAssembly=true
 ```
 
 ## Repository layout

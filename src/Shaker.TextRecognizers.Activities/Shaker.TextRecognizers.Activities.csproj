@@ -1,6 +1,14 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <!-- net6.0-windows7.0 => UiPath "Windows" projects, and where the designers live.
+         net6.0            => UiPath "Cross-platform" projects, and the fallback a host
+                              resolves against when it does not want the Windows flavour.
+         Both, not one. Studio reads the target-framework groups in the package manifest to
+         decide which project types it supports; offering only net6.0-windows7.0 makes it
+         report "This package is not compatible with Windows projects". -->
+    <TargetFrameworks>net6.0;net6.0-windows</TargetFrameworks>
+
     <PackageId>Shaker.TextRecognizers.Activities</PackageId>
     <AssemblyName>Shaker.TextRecognizers.Activities</AssemblyName>
 
@@ -22,6 +30,9 @@
     <!-- Shown beside the package in Studio's Manage Packages. The source vector lives in
          assets/icons/; tools/render-package-icons.py regenerates it. -->
     <PackageIcon>icon.png</PackageIcon>
+
+    <!-- NU5100: the design assembly is placed into lib/ by path, not as build output. -->
+    <NoWarn>$(NoWarn);NU5100</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -31,7 +42,7 @@
          design DLL to embed - but packing without it produces a package whose activities have
          no icons, which is easy to ship by accident. Hence the warning below.
          Set RequireDesignAssembly=true to turn that warning into a hard error. -->
-    <_DesignDll>$(MSBuildThisFileDirectory)..\Shaker.TextRecognizers.Activities.Design\bin\$(Configuration)\$(TargetFramework)\Shaker.TextRecognizers.Activities.Design.dll</_DesignDll>
+    <_DesignDll>$(MSBuildThisFileDirectory)..\Shaker.TextRecognizers.Activities.Design\bin\$(Configuration)\net6.0-windows\Shaker.TextRecognizers.Activities.Design.dll</_DesignDll>
     <RequireDesignAssembly Condition="'$(RequireDesignAssembly)' == ''">false</RequireDesignAssembly>
   </PropertyGroup>
 
@@ -41,10 +52,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <!-- The workflow base types (System.Activities namespace) - UiPath's CoreWF fork.
-         Compile-time only: the Studio/Robot host supplies the same assembly at run time,
-         so PrivateAssets keeps it from being bundled or forced onto consumers. -->
-    <PackageReference Include="System.Activities" Version="5.0.0-20210730-02" PrivateAssets="all" />
+    <!-- The workflow base types (CodeActivity, InArgument<T>, …). Compile time only: the
+         host - Studio and the robot - brings its own copy at run time, so PrivateAssets
+         keeps it out of the package's dependencies.
+
+         The version matters. Studio ships System.Activities 6.0.0.0, and an assembly
+         compiled against a higher one cannot be loaded by it - which Studio also reports as
+         "not compatible with Windows projects". This build from UiPath's own feed is the
+         6.0.0.0 one. -->
+    <PackageReference Include="UiPath.Workflow.Runtime" Version="6.0.0-20220401-03" PrivateAssets="all" ExcludeAssets="runtime" />
   </ItemGroup>
 
   <ItemGroup>
@@ -69,16 +85,24 @@
     <ItemGroup>
       <BuildOutputInPackage Include="@(ReferenceCopyLocalPaths)"
                             Condition="$([System.String]::Copy('%(FileName)').StartsWith('Microsoft.Recognizers')) Or $([System.String]::Copy('%(FileName)').StartsWith('Microsoft.Extensions'))" />
-      <!-- Studio-only design assembly (per-activity icons). Lives beside the runtime DLL in
-           lib/<tfm>/; the robot never loads it because nothing in the runtime references it.
-           Included only when the Design project has been built, which needs Studio installed. -->
-      <BuildOutputInPackage Include="$(_DesignDll)" Condition="Exists('$(_DesignDll)')" />
     </ItemGroup>
   </Target>
 
-  <!-- Packing without the design assembly is a real outcome (no Studio on this machine), but
-       it must never be a quiet one: the resulting package installs and runs fine while every
-       activity shows a blank icon. -->
+  <!-- The designers are built here rather than referenced: the design project references this
+       one, so a ProjectReference back would be a cycle. -->
+  <Target Name="BuildDesigners" BeforeTargets="GenerateNuspec" Condition="'$(NoBuild)' != 'true'">
+    <MSBuild Projects="$(MSBuildThisFileDirectory)..\Shaker.TextRecognizers.Activities.Design\Shaker.TextRecognizers.Activities.Design.csproj"
+             Targets="Build" Properties="Configuration=$(Configuration)" />
+  </Target>
+
+  <ItemGroup>
+    <!-- Windows lib folder only: lib/net6.0 is the frameworkless fallback and cannot load WPF. -->
+    <None Include="$(_DesignDll)" Pack="true" PackagePath="lib/net6.0-windows7.0/" Visible="false"
+          Condition="Exists('$(_DesignDll)')" />
+  </ItemGroup>
+
+  <!-- Packing without the design assembly is a real outcome, but it must never be a quiet one:
+       the resulting package installs and runs fine while every activity shows a blank icon. -->
   <Target Name="WarnWhenDesignAssemblyMissing" BeforeTargets="GenerateNuspec">
     <Warning Condition="!Exists('$(_DesignDll)') And '$(RequireDesignAssembly)' != 'true'"
              Code="TRX0001"

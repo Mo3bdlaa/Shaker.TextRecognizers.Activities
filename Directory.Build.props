@@ -9,10 +9,8 @@
   -->
   <PropertyGroup>
 
-    <!-- All activity packages target the modern UiPath (.NET 6) Windows runtime.
-         A net6.0 assembly also loads cleanly inside newer .NET 8 Studio/Robot hosts,
-         so this single target covers current modern Studio. -->
-    <TargetFramework>net6.0-windows</TargetFramework>
+    <!-- Target frameworks are set per project: the package multi-targets so Studio can
+         resolve it for both project types, and the designers are Windows-only. -->
 
     <!-- Lets us build Windows-specific target frameworks with only the .NET SDK
          installed (no full Visual Studio / desktop targeting pack required). -->

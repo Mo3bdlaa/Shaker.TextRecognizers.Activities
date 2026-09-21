@@ -1,6 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <!-- The package offers net6.0, so the tests run on it directly - no Windows flavour needed. -->
+    <TargetFramework>net6.0</TargetFramework>
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
   </PropertyGroup>
@@ -9,8 +11,9 @@
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
     <PackageReference Include="xunit" Version="2.9.2" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2" />
-    <!-- WorkflowInvoker, used to run each activity exactly as Studio would. -->
-    <PackageReference Include="System.Activities" Version="5.0.0-20210730-02" />
+    <!-- WorkflowInvoker, used to run each activity exactly as Studio would. Same build the
+         activities compile against, so the tests exercise the assembly Studio will load. -->
+    <PackageReference Include="UiPath.Workflow.Runtime" Version="6.0.0-20220401-03" />
   </ItemGroup>
 
   <ItemGroup>

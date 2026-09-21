@@ -166,6 +166,7 @@ Publishing is not immediate. The Marketplace security certification runs in stag
 | No "UiPath" in package ID or DLL names | clean |
 | No credentials or hard-coded secrets | none in the source |
 | Versioned | 1.0.0 |
+| Resolvable by Studio | `net6.0` + `net6.0-windows` both offered |
 | Design assembly present in the uploaded package | yes — CI requires it (`RequireDesignAssembly=true`) |
 
 ---

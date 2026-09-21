@@ -13,7 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Shaker.TextRecognizers.Activities\Shaker.TextRecognizers.Activities.csproj" />
-    <PackageReference Include="System.Activities" Version="5.0.0-20210730-02" PrivateAssets="all" />
+    <PackageReference Include="UiPath.Workflow.Runtime" Version="6.0.0-20220401-03" PrivateAssets="all" ExcludeAssets="runtime" />
   </ItemGroup>
 
   <!--

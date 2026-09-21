@@ -60,6 +60,22 @@ Icons are inline `DrawingBrush` vector geometry — no image files to ship. All
 ten designers are registered through a single `IRegisterMetadata` (`DesignerMetadata.cs`) that
 Studio discovers automatically.
 
+### Which project types the package supports
+
+The package multi-targets **`net6.0`** and **`net6.0-windows`**. Both, not one: Studio reads the
+target-framework groups in the package manifest to decide which project types it supports, and a
+package offering only `net6.0-windows7.0` is reported as
+*"This package is not compatible with Windows projects"*.
+
+The designers are WPF, so they ship in `lib/net6.0-windows7.0/` only — `lib/net6.0` is the
+frameworkless fallback and cannot load them. A Cross-platform project therefore gets the
+activities with Studio's stock designers, and a Windows project gets the per-activity icons.
+
+The same error appears for a second reason worth knowing: Studio ships `System.Activities`
+**6.0.0.0**, and an assembly compiled against a higher version cannot be loaded by it. The
+activities reference `UiPath.Workflow.Runtime 6.0.0-20220401-03` from UiPath's own feed, which
+is that build — the `UiPath.Workflow*` packages on nuget.org carry 6.0.3.0 and do not load.
+
 ### Building
 
 The design assembly is part of the solution and builds anywhere — no UiPath Studio needed:

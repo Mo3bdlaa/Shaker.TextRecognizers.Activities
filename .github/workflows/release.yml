@@ -101,11 +101,25 @@ jobs:
             $names = $zip.Entries | ForEach-Object { $_.Name }
           } finally { $zip.Dispose() }
 
+          $zip2 = [System.IO.Compression.ZipFile]::OpenRead($pkg.FullName)
+          try { $paths = $zip2.Entries | ForEach-Object { $_.FullName } } finally { $zip2.Dispose() }
+
           $missing = @()
           if ($names -notcontains 'Shaker.TextRecognizers.Activities.Design.dll') {
             $missing += 'the design assembly (per-activity panel icons)'
           }
           if ($names -notcontains 'icon.png') { $missing += 'the package icon' }
+
+          # Studio decides which project types it supports from the lib folders and the
+          # manifest's target-framework groups. Offering only the Windows flavour makes it
+          # report "This package is not compatible with Windows projects".
+          foreach ($tfm in 'lib/net6.0/', 'lib/net6.0-windows7.0/') {
+            if (-not ($paths | Where-Object { $_.StartsWith($tfm) })) { $missing += "$tfm is empty" }
+          }
+          if ($paths -notcontains 'Shaker.TextRecognizers.Activities.Design.dll' -and
+              -not ($paths | Where-Object { $_ -eq 'lib/net6.0-windows7.0/Shaker.TextRecognizers.Activities.Design.dll' })) {
+            $missing += 'the design assembly is not in lib/net6.0-windows7.0/'
+          }
 
           # The stubs stand in for assemblies Studio owns; shipping them would shadow the real ones.
           foreach ($stub in 'System.Activities.Presentation.dll', 'System.Activities.Metadata.dll') {
@@ -116,7 +130,7 @@ jobs:
             Write-Host "::error::$($pkg.Name) is not publishable: $($missing -join '; ')"
             exit 1
           }
-          Write-Host "$($pkg.Name) is complete: designers and package icon present, no stubs shipped."
+          Write-Host "$($pkg.Name) is complete: both lib folders, designers in the Windows one, package icon present, no stubs shipped."
         shell: pwsh
 
       - name: Publish the release
