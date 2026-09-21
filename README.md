@@ -84,7 +84,7 @@ for you: `(UTC+00:00) London` anchors at UTC+00:00 in winter and UTC+01:00 in su
 
 | Member | Meaning |
 |---|---|
-| `Text`, `StartIndex`, `Length` | The matched substring and where it sat in the input. |
+| `Text`, `StartIndex`, `Length` | The matched substring, exactly as it appears in the input (casing included), and where it sat. |
 | `Subtype` | `Date`, `Time`, `DateTime`, `DatePeriod`, `TimePeriod`, `DateTimePeriod`, `Duration`, `Set`. |
 | `Value` | The point-in-time value (for dates/times). |
 | `RangeStart`, `RangeEnd` | Start/end (for periods). |

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Globalization;
 using Microsoft.Recognizers.Text;
+using TextRecognizers.Core;
 using Microsoft.Recognizers.Text.Number;
 
 namespace TextRecognizers.Numbers
@@ -27,7 +28,18 @@ namespace TextRecognizers.Numbers
                 return results;
 
             foreach (var modelResult in GetModel(cultureCode, kind).Parse(text))
-                results.Add(Map(modelResult, kind));
+            {
+                var result = Map(modelResult, kind, text);
+
+                // Relative ordinals - "next", "last", "the one before" - resolve to an
+                // expression rather than a number ("current+1"), because they only mean
+                // something against a position the text does not carry. There is no Double to
+                // report, so they are left out rather than surfaced as NaN.
+                if (double.IsNaN(result.Value))
+                    continue;
+
+                results.Add(result);
+            }
 
             return results;
         }
@@ -84,11 +96,11 @@ namespace TextRecognizers.Numbers
             });
         }
 
-        private static NumberRecognitionResult Map(ModelResult modelResult, NumberKind kind)
+        private static NumberRecognitionResult Map(ModelResult modelResult, NumberKind kind, string source)
         {
             var result = new NumberRecognitionResult
             {
-                Text = modelResult.Text ?? string.Empty,
+                Text = MatchText.Slice(source, modelResult.Start, modelResult.End),
                 StartIndex = modelResult.Start,
                 Length = modelResult.End - modelResult.Start + 1,
                 Kind = kind,

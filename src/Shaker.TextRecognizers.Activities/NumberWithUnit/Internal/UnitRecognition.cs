@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Globalization;
 using Microsoft.Recognizers.Text;
+using TextRecognizers.Core;
 using Microsoft.Recognizers.Text.NumberWithUnit;
 
 namespace TextRecognizers.Units
@@ -24,7 +25,7 @@ namespace TextRecognizers.Units
                 return results;
 
             foreach (var modelResult in GetModel(cultureCode, kind).Parse(text))
-                results.Add(Map(modelResult, kind));
+                results.Add(Map(modelResult, kind, text));
 
             return results;
         }
@@ -80,11 +81,11 @@ namespace TextRecognizers.Units
             });
         }
 
-        private static MeasurementResult Map(ModelResult modelResult, MeasurementKind kind)
+        private static MeasurementResult Map(ModelResult modelResult, MeasurementKind kind, string source)
         {
             var result = new MeasurementResult
             {
-                Text = modelResult.Text ?? string.Empty,
+                Text = MatchText.Slice(source, modelResult.Start, modelResult.End),
                 StartIndex = modelResult.Start,
                 Length = modelResult.End - modelResult.Start + 1,
                 Kind = kind,

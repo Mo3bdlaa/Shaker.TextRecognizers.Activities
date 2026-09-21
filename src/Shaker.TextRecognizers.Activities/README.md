@@ -34,6 +34,10 @@ Parse Date/Time
 decimals and fractions, "two and a half" → 2.5), **Ordinal** ("1st", "second" → 1, 2) or
 **Percentage** ("fifty percent", "50%" → 50).
 
+> **Relative ordinals** — "next", "last" — resolve to a position relative to something the
+> text does not carry, so there is no number to return. They are left out of `Matches`, and
+> `Parse Number` reports `Success = False`.
+
 ```
 Parse Number
   Text = "the discount is fifty percent",  Kind = Percentage
@@ -57,6 +61,11 @@ Parse Measurement
 **IpAddress**, **Guid**, **Hashtag** or **Mention**. These patterns are largely
 language-independent, so **Language** has little effect here.
 
+> **Phone numbers:** the match is whatever the recognizer spans, and for some national formats
+> that excludes the country code — `+1 555-123-4567` comes back as `555-123-4567`, while
+> `+44 20 7946 0958` keeps its `+44`. `StartIndex` points at the start of the span the
+> recognizer chose, so a leading `+1` sits just before it in the input.
+
 ```
 Recognize Sequences
   Text = "ping me at jane@acme.com or +1 555-123-4567",  Kind = Email
@@ -66,7 +75,10 @@ Recognize Sequences
 ## Yes / no — `TextRecognizers.Choices`
 
 **Recognize Booleans** · **Parse Boolean** — returns a real `Boolean` plus a confidence
-`Score`. Understands far more than "yes"/"no": "sure", "absolutely", "nope", "I don't think so".
+`Score`. Beyond plain "yes"/"no" the recognizer knows a short list of colloquial forms —
+"yeah", "yep", "yup", "sure", "ok", "nope", "no way" among them. It is narrower than it looks:
+"absolutely", "definitely", "of course", "nah", "never" and "I don't think so" are **not**
+recognised and give `Success = False`. Check `Success` before trusting `Value`.
 
 ```
 Parse Boolean

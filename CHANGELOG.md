@@ -36,6 +36,8 @@ First release. All five recognizer domains, fully offline.
   confidence score.
 - Fully **offline / airgapped** packaging: the Microsoft.Recognizers engine DLLs are
   embedded, so the single `.nupkg` installs with no external restore.
-- 39 unit tests across all five domains, run through WorkflowInvoker.
+- 65 unit tests across all five domains, run through WorkflowInvoker - including the cases
+  a Studio test pass turned up, and the recognizer's actual yes/no vocabulary, so the docs
+  and the behaviour stay in step.
 
 [1.0.0]: https://mohammedshaker.com

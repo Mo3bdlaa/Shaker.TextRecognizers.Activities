@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Globalization;
 using Microsoft.Recognizers.Text;
+using TextRecognizers.Core;
 using Microsoft.Recognizers.Text.DateTime;
 
 namespace TextRecognizers.DateTimes
@@ -35,7 +36,7 @@ namespace TextRecognizers.DateTimes
 
             // Parse returns the matches in order of appearance within the text.
             foreach (var modelResult in model.Parse(text, reference))
-                results.Add(Map(modelResult));
+                results.Add(Map(modelResult, text));
 
             return results;
         }
@@ -98,11 +99,11 @@ namespace TextRecognizers.DateTimes
         }
 
         /// <summary>Translates one raw recognizer result into our typed result object.</summary>
-        private static DateTimeRecognitionResult Map(ModelResult modelResult)
+        private static DateTimeRecognitionResult Map(ModelResult modelResult, string source)
         {
             var result = new DateTimeRecognitionResult
             {
-                Text = modelResult.Text ?? string.Empty,
+                Text = MatchText.Slice(source, modelResult.Start, modelResult.End),
                 StartIndex = modelResult.Start,
                 // The recognizer's End is the index of the LAST matched character, so the
                 // character length is (End - Start + 1).

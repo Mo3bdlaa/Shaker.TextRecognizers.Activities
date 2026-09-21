@@ -5,7 +5,7 @@ namespace TextRecognizers.Choices
     /// </summary>
     public sealed class BooleanResult
     {
-        /// <summary>The exact substring that was recognised, e.g. "absolutely".</summary>
+        /// <summary>The exact substring that was recognised, e.g. "yeah".</summary>
         public string Text { get; set; } = string.Empty;
 
         /// <summary>Zero-based index of <see cref="Text"/> within the original input.</summary>

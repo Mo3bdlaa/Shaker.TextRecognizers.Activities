@@ -2,6 +2,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data;
 using Microsoft.Recognizers.Text;
+using TextRecognizers.Core;
 using Microsoft.Recognizers.Text.Sequence;
 
 namespace TextRecognizers.Sequences
@@ -22,7 +23,7 @@ namespace TextRecognizers.Sequences
                 return results;
 
             foreach (var modelResult in GetModel(cultureCode, kind).Parse(text))
-                results.Add(Map(modelResult, kind));
+                results.Add(Map(modelResult, kind, text));
 
             return results;
         }
@@ -71,9 +72,9 @@ namespace TextRecognizers.Sequences
             });
         }
 
-        private static SequenceResult Map(ModelResult modelResult, SequenceKind kind)
+        private static SequenceResult Map(ModelResult modelResult, SequenceKind kind, string source)
         {
-            var text = modelResult.Text ?? string.Empty;
+            var text = MatchText.Slice(source, modelResult.Start, modelResult.End);
             var result = new SequenceResult
             {
                 Text = text,
