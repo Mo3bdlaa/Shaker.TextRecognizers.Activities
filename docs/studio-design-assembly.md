@@ -33,15 +33,24 @@ refreshes. See [assets/icons/README.md](../assets/icons/README.md).
 ## ✅ Per-activity icons in the panel — design assemblies (one per domain)
 
 The little icon next to each activity in the panel comes from a **design assembly**
-(`*.Activities.Design`) that renders a WPF `ActivityDesigner.Icon`. Every domain now has one:
+(`*.Activities.Design`) that renders a WPF `ActivityDesigner.Icon`. Every activity has its own:
 
-| Design assembly | Activities it decorates | Icon |
+| Activity | Icon | Design assembly |
 |---|---|---|
-| `TextRecognizers.DateTime.Activities.Design` | Recognize/Parse Date/Time | calendar |
-| `TextRecognizers.Number.Activities.Design` | Recognize/Parse Number | hash `#` |
-| `TextRecognizers.NumberWithUnit.Activities.Design` | Recognize/Parse Measurement | ruler |
-| `TextRecognizers.Sequence.Activities.Design` | Recognize/Parse Sequence | envelope |
-| `TextRecognizers.Choice.Activities.Design` | Recognize/Parse Boolean | toggle |
+| Recognize Date/Time | calendar | `Shaker.TextRecognizers.Activities.DateTime.Design` |
+| Parse Date/Time | clock | (same) |
+| Recognize Numbers | hash `#` | `Shaker.TextRecognizers.Activities.Number.Design` |
+| Parse Number | numeral `1` | (same) |
+| Recognize Measurements | ruler | `Shaker.TextRecognizers.Activities.NumberWithUnit.Design` |
+| Parse Measurement | gauge | (same) |
+| Recognize Sequences | envelope | `Shaker.TextRecognizers.Activities.Sequence.Design` |
+| Parse Sequence | link | (same) |
+| Recognize Booleans | toggle | `Shaker.TextRecognizers.Activities.Choice.Design` |
+| Parse Boolean | check in a circle | (same) |
+
+Each activity has its own designer class, so **Recognize** and **Parse** are told apart at a
+glance: the Recognize icon stands for the whole domain, and the Parse icon for pulling one
+value out of it.
 
 Each assembly is a `net6.0-windows` `<UseWPF>` project that references its activities project and
 the WF presentation assemblies (resolved from the local UiPath Studio install via
@@ -50,7 +59,7 @@ designers are registered through an `IRegisterMetadata` (`DesignerMetadata.cs`) 
 discovers automatically.
 
 ### Building (the design assemblies are not in the solution)
-The `*.Design` projects are kept **out of `TextRecognizers.slnx`** so the main build/test/pack
+The `*.Design` projects are kept **out of `Shaker.TextRecognizers.slnx`** so the main build/test/pack
 works on machines without Studio. Build them once on a machine that has UiPath Studio installed,
 then pack — each domain package picks up its `*.Design.dll` automatically (the runtime `.csproj`
 embeds it next to the runtime DLL via an `Exists(...)` condition):
@@ -61,7 +70,7 @@ Get-ChildItem src -Recurse -Filter *.Activities.Design.csproj |
   ForEach-Object { dotnet build $_.FullName -c Release }
 
 # 2) pack — the design DLLs are embedded into each .nupkg
-dotnet pack TextRecognizers.slnx -c Release -o build/packages
+dotnet pack Shaker.TextRecognizers.slnx -c Release -o build/packages
 ```
 
 If Studio is **not** installed, skip step 1: the packages still build and work, just without the

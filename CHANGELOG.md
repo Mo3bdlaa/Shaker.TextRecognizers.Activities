@@ -11,7 +11,7 @@ First release. All five recognizer domains, fully offline.
 ### Added
 - **Shared core** — base activity, the `CultureOption` language drop-down (14 languages),
   and common helpers, embedded directly into every domain package (not a separate package).
-- **TextRecognizers.DateTime.Activities**
+- **Shaker.TextRecognizers.Activities.DateTime**
   - **Recognize Date/Time** — finds every date/time mention in text; returns a typed list,
     a `DataTable`, and a "has matches" flag.
   - **Parse Date/Time** — extracts the single best date/time as a ready-to-use value,
@@ -26,12 +26,12 @@ First release. All five recognizer domains, fully offline.
     daylight saving is applied automatically - `(UTC+00:00) London` anchors at UTC+00:00 in
     winter and UTC+01:00 in summer. Half- and quarter-hour offsets are covered
     (Kolkata +05:30, Kathmandu +05:45, Chatham +12:45).
-- **TextRecognizers.Number.Activities** — Recognize/Parse numbers, ordinals and percentages.
-- **TextRecognizers.NumberWithUnit.Activities** — Recognize/Parse currency, temperature,
+- **Shaker.TextRecognizers.Activities.Number** — Recognize/Parse numbers, ordinals and percentages.
+- **Shaker.TextRecognizers.Activities.NumberWithUnit** — Recognize/Parse currency, temperature,
   age and dimension (value + unit).
-- **TextRecognizers.Sequence.Activities** — Recognize/Parse emails, phone numbers, URLs,
+- **Shaker.TextRecognizers.Activities.Sequence** — Recognize/Parse emails, phone numbers, URLs,
   IP addresses, GUIDs, hashtags and mentions.
-- **TextRecognizers.Choice.Activities** — Recognize/Parse boolean (yes/no) answers with a
+- **Shaker.TextRecognizers.Activities.Choice** — Recognize/Parse boolean (yes/no) answers with a
   confidence score.
 - Fully **offline / airgapped** packaging: the Microsoft.Recognizers engine DLLs are
   embedded in each package, so a single `.nupkg` installs with no external restore.

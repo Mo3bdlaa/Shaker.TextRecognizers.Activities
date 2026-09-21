@@ -1,0 +1,24 @@
+<sap:ActivityDesigner x:Class="TextRecognizers.Sequences.Design.ParseSequenceDesigner"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:sap="clr-namespace:System.Activities.Presentation;assembly=System.Activities.Presentation">
+    <sap:ActivityDesigner.Icon>
+        <DrawingBrush Stretch="Uniform">
+            <DrawingBrush.Drawing>
+                <!-- A link glyph for ParseSequence — the single best match. -->
+                <GeometryDrawing>
+                    <GeometryDrawing.Pen>
+                        <Pen Brush="#5B5BD6" Thickness="2" LineJoin="Round" StartLineCap="Round" EndLineCap="Round"/>
+                    </GeometryDrawing.Pen>
+                    <GeometryDrawing.Geometry>
+                        <GeometryGroup>
+                            <PathGeometry Figures="M 10,13.5 A 4,4 0 0 1 10,7.5 L 13,4.5 A 4,4 0 0 1 19,10.5 L 17.5,12"/>
+                            <PathGeometry Figures="M 14,10.5 A 4,4 0 0 1 14,16.5 L 11,19.5 A 4,4 0 0 1 5,13.5 L 6.5,12"/>
+                        </GeometryGroup>
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+            </DrawingBrush.Drawing>
+        </DrawingBrush>
+    </sap:ActivityDesigner.Icon>
+    <Grid Margin="2" MinWidth="160" MinHeight="20"/>
+</sap:ActivityDesigner>

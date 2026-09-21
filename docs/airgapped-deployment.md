@@ -21,7 +21,7 @@ package declares **no `<dependency>` entries** at all.
 Just **one file per domain** — the domain package itself:
 
 ```
-TextRecognizers.DateTime.Activities.<version>.nupkg
+Shaker.TextRecognizers.Activities.DateTime.<version>.nupkg
 ```
 
 The package has **no dependencies** to mirror: the recognizer engine and the shared core are
@@ -54,7 +54,7 @@ Produce the `.nupkg` files on a machine that *does* have access to nuget.org + t
 then carry them in:
 
 ```powershell
-dotnet pack TextRecognizers.slnx -c Release -o build/packages
+dotnet pack Shaker.TextRecognizers.slnx -c Release -o build/packages
 ```
 
 The embedding happens automatically during `pack` (see the `IncludeRecognizerAssembliesInPackage`

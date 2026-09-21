@@ -22,15 +22,15 @@ boolean straight back.
 
 | Package | What it gives you | Status |
 |---|---|---|
-| `TextRecognizers.DateTime.Activities` | Dates, times, ranges, durations, recurrences | ✅ 1.0.0 |
-| `TextRecognizers.Number.Activities` | Numbers, ordinals, percentages | ✅ 1.0.0 |
-| `TextRecognizers.NumberWithUnit.Activities` | Currency, temperature, age, dimension | ✅ 1.0.0 |
-| `TextRecognizers.Sequence.Activities` | Phone, email, URL, IP, GUID, hashtag, mention | ✅ 1.0.0 |
-| `TextRecognizers.Choice.Activities` | Boolean (yes / no) | ✅ 1.0.0 |
+| `Shaker.TextRecognizers.Activities.DateTime` | Dates, times, ranges, durations, recurrences | ✅ 1.0.0 |
+| `Shaker.TextRecognizers.Activities.Number` | Numbers, ordinals, percentages | ✅ 1.0.0 |
+| `Shaker.TextRecognizers.Activities.NumberWithUnit` | Currency, temperature, age, dimension | ✅ 1.0.0 |
+| `Shaker.TextRecognizers.Activities.Sequence` | Phone, email, URL, IP, GUID, hashtag, mention | ✅ 1.0.0 |
+| `Shaker.TextRecognizers.Activities.Choice` | Boolean (yes / no) | ✅ 1.0.0 |
 
 ## Quick start
 
-1. Install **`TextRecognizers.DateTime.Activities`** from your feed — it is fully self-contained,
+1. Install **`Shaker.TextRecognizers.Activities.DateTime`** from your feed — it is fully self-contained,
    so there is nothing else to install. For airgapped feeds, see the [deployment guide](docs/airgapped-deployment.md).
 2. Drag **Parse Date/Time** onto the canvas.
 3. Set **Text** to the string you want to read, e.g. an email body or an Excel cell.
@@ -113,9 +113,9 @@ package documents its own.)
 Requires the .NET SDK (built and tested with .NET 10; the packages target `net6.0-windows`).
 
 ```powershell
-dotnet build   TextRecognizers.slnx -c Release
-dotnet test    tests/TextRecognizers.Tests/TextRecognizers.Tests.csproj
-dotnet pack    TextRecognizers.slnx -c Release -o build/packages
+dotnet build   Shaker.TextRecognizers.slnx -c Release
+dotnet test    tests/Shaker.TextRecognizers.Tests/Shaker.TextRecognizers.Tests.csproj
+dotnet pack    Shaker.TextRecognizers.slnx -c Release -o build/packages
 ```
 
 ## Repository layout
