@@ -17,18 +17,13 @@ work, but every per-activity icon is missing, because the embed is guarded by an
 `Exists(...)` condition. See [studio-design-assembly.md](studio-design-assembly.md).
 
 ```powershell
-# on the Studio machine
-dotnet build src/Shaker.TextRecognizers.Activities.Design/Shaker.TextRecognizers.Activities.Design.csproj -c Release
-dotnet pack Shaker.TextRecognizers.slnx -c Release -o build/packages
+# on the Studio machine - builds the design assembly, packs, and verifies the icons
+# are really in the .nupkg. Fails rather than producing an icon-less package.
+./tools/pack-with-icons.ps1
 ```
 
-Then confirm the design assembly actually made it in:
-
-```powershell
-# should list Shaker.TextRecognizers.Activities.Design.dll
-Expand-Archive build/packages/Shaker.TextRecognizers.Activities.1.0.0.nupkg -DestinationPath tmp
-Get-ChildItem tmp/lib -Recurse -Filter *.Design.dll
-```
+Packing any other way warns (`TRX0001`) when the design assembly is missing, so an
+icon-less package cannot be produced unnoticed.
 
 And install one package into a scratch Studio project to check: the activities appear under
 **TextRecognizers**, each carries its own icon, and **Language** / **Kind** / **Time Zone**

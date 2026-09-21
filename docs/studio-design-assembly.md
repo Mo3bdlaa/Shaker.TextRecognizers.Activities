@@ -74,8 +74,26 @@ dotnet build src/Shaker.TextRecognizers.Activities.Design/Shaker.TextRecognizers
 dotnet pack Shaker.TextRecognizers.slnx -c Release -o build/packages
 ```
 
-If Studio is **not** installed, skip step 1: the package still builds and works, just without the
-per-activity panel icons (the `Exists(...)` condition simply finds no design DLL to embed).
+One command does all of it, and fails rather than producing an icon-less package:
+
+```powershell
+./tools/pack-with-icons.ps1
+```
+
+If Studio is **not** installed, the package still builds and works, just without the
+per-activity panel icons — and `dotnet pack` warns (`TRX0001`) so it cannot happen unnoticed.
+Pass `-p:RequireDesignAssembly=true` to make it a hard error instead.
+
+### Why this cannot be done on CI
+
+`System.Activities.Presentation` and `System.Activities.Presentation.Model` ship **only with
+UiPath Studio**. They are not on nuget.org, not on UiPath's public feed, and not inside
+`UiPath.Workflow` — all three were checked. `System.Activities.Metadata` *is* on UiPath's feed,
+but the two presentation assemblies are the ones the designers need.
+
+So a hosted runner cannot build the design assembly, and a release cut from CI carries no
+per-activity icons. The release workflow inspects the packed `.nupkg` and says so in the
+release notes rather than letting the gap pass unnoticed.
 
 The `assets/icons/*.svg` files are the same glyphs in source form, for reuse as package icons or docs.
 

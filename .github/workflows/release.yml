@@ -8,12 +8,14 @@ name: Release
 #
 # Runs on Windows because every project targets net6.0-windows.
 #
-# NOTE ON STUDIO ICONS: the `*.Activities.Design` assemblies resolve their WPF
-# references from a local UiPath Studio install (see docs/studio-design-assembly.md).
-# Studio is not present on a hosted runner, so packages produced here work fully but
-# carry no per-activity panel icons - the `Exists(...)` condition in each runtime
-# .csproj simply finds no design DLL to embed. To publish icon-complete packages,
-# build on a machine with Studio and upload those .nupkg files to the release.
+# NOTE ON STUDIO ICONS: the design assembly resolves System.Activities.Presentation from
+# a local UiPath Studio install. That assembly ships only with Studio - it is on no public
+# feed - so a hosted runner cannot build it, and the package produced here works fully but
+# shows no per-activity icons in the panel.
+#
+# Rather than let that pass unnoticed, the job checks the packed .nupkg and says so in the
+# release notes. For an icon-complete package (the one UiPath Marketplace wants), run
+# tools/pack-with-icons.ps1 on a machine with Studio and upload that .nupkg over the asset.
 
 on:
   push:
@@ -88,6 +90,39 @@ jobs:
           }
         shell: pwsh
 
+      # Say plainly whether the artifact carries the per-activity icons, so a release built
+      # here is never mistaken for the one to submit to Marketplace.
+      # Say plainly whether the artifact carries the per-activity icons, so a release built
+      # here is never mistaken for the one to submit to Marketplace.
+      - name: Check the package for the design assembly
+        run: |
+          Add-Type -AssemblyName System.IO.Compression.FileSystem
+          $pkg = Get-ChildItem build/packages -Filter *.nupkg | Select-Object -First 1
+          $zip = [System.IO.Compression.ZipFile]::OpenRead($pkg.FullName)
+          try {
+            $hasDesign = [bool]($zip.Entries | Where-Object { $_.Name -like '*.Design.dll' })
+          } finally { $zip.Dispose() }
+
+          Copy-Item CHANGELOG.md release-notes.md
+          if ($hasDesign) {
+            Write-Host "Design assembly present - per-activity icons included."
+          } else {
+            Write-Host "::warning::No design assembly in $($pkg.Name) - the activities will have no panel icons."
+            $note = @(
+              ''
+              '---'
+              ''
+              '> **Built on a hosted runner, so this package has no per-activity panel icons.**'
+              '> The design assembly that carries them needs UiPath Studio installed, which a'
+              '> GitHub runner does not have. The activities themselves work exactly as documented.'
+              '>'
+              '> For an icon-complete package - the one to submit to UiPath Marketplace - run'
+              '> `tools/pack-with-icons.ps1` on a machine with Studio.'
+            )
+            Add-Content release-notes.md $note
+          }
+        shell: pwsh
+
       - name: Publish the release
         env:
           GH_TOKEN: ${{ github.token }}
@@ -95,5 +130,5 @@ jobs:
           gh release create "$env:TAG"
           (Get-ChildItem build/packages/*.nupkg).FullName
           --title "Text Recognizers $env:TAG"
-          --notes-file CHANGELOG.md
+          --notes-file release-notes.md
         shell: pwsh
