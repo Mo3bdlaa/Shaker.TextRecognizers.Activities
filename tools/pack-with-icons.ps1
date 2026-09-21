@@ -4,28 +4,23 @@
     actually made it into the package.
 
 .DESCRIPTION
-    Run this on a machine with UiPath Studio installed. The design assembly carries the
-    per-activity panel icons and references System.Activities.Presentation, which ships
-    with Studio and is published on no public feed - so this is the only place the
-    complete package can be produced. A build anywhere else silently omits it and every
-    activity shows a blank icon.
+    The design assembly carries the per-activity panel icons. It compiles against the
+    reference stubs in stubs/ rather than a UiPath Studio install, so this runs anywhere;
+    Studio supplies the real assemblies at run time. Without the design assembly the
+    package still installs and runs, but every activity shows a blank icon.
 
-    RequireDesignAssembly=true makes that omission a hard error rather than a warning, so
-    this script cannot quietly produce an icon-less package.
+    RequireDesignAssembly=true makes a missing design assembly a hard error rather than a
+    warning, so this script cannot quietly produce an icon-less package.
 
 .PARAMETER Output
     Where to write the .nupkg. Defaults to build/packages.
-
-.PARAMETER UiPathStudioDir
-    Override if Studio is not at the default install location.
 
 .EXAMPLE
     ./tools/pack-with-icons.ps1
 #>
 [CmdletBinding()]
 param(
-    [string] $Output = "build/packages",
-    [string] $UiPathStudioDir
+    [string] $Output = "build/packages"
 )
 
 $ErrorActionPreference = "Stop"
@@ -35,17 +30,13 @@ Push-Location $root
 try {
     $designProj = "src/Shaker.TextRecognizers.Activities.Design/Shaker.TextRecognizers.Activities.Design.csproj"
 
-    $buildArgs = @("build", $designProj, "-c", "Release")
-    if ($UiPathStudioDir) { $buildArgs += "-p:UiPathStudioDir=$UiPathStudioDir" }
-
     Write-Host "==> Building the design assembly (per-activity icons)" -ForegroundColor Cyan
-    dotnet @buildArgs
-    if ($LASTEXITCODE -ne 0) {
-        throw "The design assembly failed to build. It needs UiPath Studio installed; pass -UiPathStudioDir if Studio is not at the default location."
-    }
+    dotnet build $designProj -c Release
+    if ($LASTEXITCODE -ne 0) { throw "The design assembly failed to build." }
 
     Write-Host "==> Packing" -ForegroundColor Cyan
-    dotnet pack Shaker.TextRecognizers.slnx -c Release -o $Output -p:RequireDesignAssembly=true
+    dotnet pack src/Shaker.TextRecognizers.Activities/Shaker.TextRecognizers.Activities.csproj ``
+        -c Release -o $Output -p:RequireDesignAssembly=true
     if ($LASTEXITCODE -ne 0) { throw "Pack failed." }
 
     # Trust the artifact, not the build log: look inside it.

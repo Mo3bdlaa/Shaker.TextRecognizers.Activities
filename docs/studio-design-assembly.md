@@ -55,47 +55,43 @@ glance: the Recognize icon stands for the whole domain, and the Parse icon for p
 value out of it.
 
 The assembly is a `net6.0-windows` `<UseWPF>` project that references the activity project and
-the WF presentation assemblies (resolved from the local UiPath Studio install via
-`UiPathStudioDir`). Icons are inline `DrawingBrush` vector geometry — no image files to ship. All
+the WF presentation assemblies (compiled against the reference stubs in `stubs/`; see below).
+Icons are inline `DrawingBrush` vector geometry — no image files to ship. All
 ten designers are registered through a single `IRegisterMetadata` (`DesignerMetadata.cs`) that
 Studio discovers automatically.
 
-### Building (the design assembly is not in the solution)
-The `*.Design` project is kept **out of `Shaker.TextRecognizers.slnx`** so the main build/test/pack
-works on machines without Studio. Build it once on a machine that has UiPath Studio installed,
-then pack — the package picks up `Shaker.TextRecognizers.Activities.Design.dll` automatically
-(the runtime `.csproj` embeds it next to the runtime DLL via an `Exists(...)` condition):
+### Building
+
+The design assembly is part of the solution and builds anywhere — no UiPath Studio needed:
 
 ```powershell
-# 1) build the design assembly (requires UiPath Studio installed)
-dotnet build src/Shaker.TextRecognizers.Activities.Design/Shaker.TextRecognizers.Activities.Design.csproj -c Release
-
-# 2) pack — the design DLL is embedded into the .nupkg
-dotnet pack Shaker.TextRecognizers.slnx -c Release -o build/packages
+dotnet build Shaker.TextRecognizers.slnx -c Release
+dotnet pack src/Shaker.TextRecognizers.Activities/Shaker.TextRecognizers.Activities.csproj `
+  -c Release -o build/packages --no-build -p:RequireDesignAssembly=true
 ```
 
-One command does all of it, and fails rather than producing an icon-less package:
+`RequireDesignAssembly=true` turns a missing design assembly into an error instead of a
+warning, so an icon-less package cannot be produced by accident. `tools/pack-with-icons.ps1`
+does both steps and then opens the `.nupkg` to check the icons are really inside.
 
-```powershell
-./tools/pack-with-icons.ps1
-```
+Pack the package project rather than the solution: the design and stub projects are
+`IsPackable=false`, and `--no-build` trips `NETSDK1085` on them.
 
-If Studio is **not** installed, the package still builds and works, just without the
-per-activity panel icons — and `dotnet pack` warns (`TRX0001`) so it cannot happen unnoticed.
-Pass `-p:RequireDesignAssembly=true` to make it a hard error instead.
+### How it builds without Studio
 
-### Why this cannot be done on CI
+`System.Activities.Presentation` (`ActivityDesigner`) and `System.Activities.Metadata`
+(`IRegisterMetadata`, `AttributeTableBuilder`, `MetadataStore`) ship **only with UiPath
+Studio**. Neither is on nuget.org or on UiPath's public feed, and neither is inside
+`UiPath.Workflow`.
 
-`System.Activities.Presentation` and `System.Activities.Presentation.Model` ship **only with
-UiPath Studio**. They are not on nuget.org, not on UiPath's public feed, and not inside
-`UiPath.Workflow` — all three were checked. `System.Activities.Metadata` *is* on UiPath's feed,
-but the two presentation assemblies are the ones the designers need.
+Compiling still needs *something* with the right identity, so `stubs/` holds two small
+projects standing in for them — the same types and members the designers touch, under the
+assembly names and version Studio loads. They are referenced with `Private="false"`, so they
+never reach the output or the package, and Studio's real assemblies are what load at run
+time. See [stubs/README.md](../../stubs/README.md).
 
-So a hosted runner cannot build the design assembly, and a release cut from CI carries no
-per-activity icons. The release workflow inspects the packed `.nupkg` and says so in the
-release notes rather than letting the gap pass unnoticed.
-
-The `assets/icons/*.svg` files are the same glyphs in source form, for reuse as package icons or docs.
+Keep the stub signatures identical to the real ones: a mismatch compiles happily and fails
+only when Studio loads the designer.
 
 ## How to validate in Studio
 1. Run the two steps above.

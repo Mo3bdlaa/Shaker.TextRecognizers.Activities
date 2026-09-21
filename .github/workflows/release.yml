@@ -8,14 +8,12 @@ name: Release
 #
 # Runs on Windows because every project targets net6.0-windows.
 #
-# NOTE ON STUDIO ICONS: the design assembly resolves System.Activities.Presentation from
-# a local UiPath Studio install. That assembly ships only with Studio - it is on no public
-# feed - so a hosted runner cannot build it, and the package produced here works fully but
-# shows no per-activity icons in the panel.
+# The design assembly carrying the per-activity icons builds here too: it compiles against
+# the reference stubs in stubs/ rather than against a UiPath Studio install, and Studio
+# supplies the real assemblies at run time. See stubs/README.md.
 #
-# Rather than let that pass unnoticed, the job checks the packed .nupkg and says so in the
-# release notes. For an icon-complete package (the one UiPath Marketplace wants), run
-# tools/pack-with-icons.ps1 on a machine with Studio and upload that .nupkg over the asset.
+# So the package this publishes is the complete one. RequireDesignAssembly=true makes that a
+# hard requirement rather than a hope - the pack fails outright if the icons are missing.
 
 on:
   push:
@@ -64,8 +62,11 @@ jobs:
 
       # No --no-build here: TextRecognizers.Core sets IsPackable=false, and packing the
       # solution still invokes its Build target, which NoBuild rejects (NETSDK1085).
+      # Pack the package project, not the solution: the design and stub projects are
+      # IsPackable=false and --no-build would trip NETSDK1085 on them. The solution build
+      # above has already produced the design assembly this embeds.
       - name: Pack
-        run: dotnet pack Shaker.TextRecognizers.slnx -c Release -o build/packages
+        run: dotnet pack src/Shaker.TextRecognizers.Activities/Shaker.TextRecognizers.Activities.csproj -c Release -o build/packages --no-build -p:RequireDesignAssembly=true
 
       # On a tag push the tag is github.ref_name; on a manual run it comes from the
       # input above. `gh release create` creates the tag at this commit if needed.
@@ -90,37 +91,32 @@ jobs:
           }
         shell: pwsh
 
-      # Say plainly whether the artifact carries the per-activity icons, so a release built
-      # here is never mistaken for the one to submit to Marketplace.
-      # Say plainly whether the artifact carries the per-activity icons, so a release built
-      # here is never mistaken for the one to submit to Marketplace.
-      - name: Check the package for the design assembly
+      # Trust the artifact rather than the build log: open it and look.
+      - name: Verify the package is complete
         run: |
           Add-Type -AssemblyName System.IO.Compression.FileSystem
           $pkg = Get-ChildItem build/packages -Filter *.nupkg | Select-Object -First 1
           $zip = [System.IO.Compression.ZipFile]::OpenRead($pkg.FullName)
           try {
-            $hasDesign = [bool]($zip.Entries | Where-Object { $_.Name -like '*.Design.dll' })
+            $names = $zip.Entries | ForEach-Object { $_.Name }
           } finally { $zip.Dispose() }
 
-          Copy-Item CHANGELOG.md release-notes.md
-          if ($hasDesign) {
-            Write-Host "Design assembly present - per-activity icons included."
-          } else {
-            Write-Host "::warning::No design assembly in $($pkg.Name) - the activities will have no panel icons."
-            $note = @(
-              ''
-              '---'
-              ''
-              '> **Built on a hosted runner, so this package has no per-activity panel icons.**'
-              '> The design assembly that carries them needs UiPath Studio installed, which a'
-              '> GitHub runner does not have. The activities themselves work exactly as documented.'
-              '>'
-              '> For an icon-complete package - the one to submit to UiPath Marketplace - run'
-              '> `tools/pack-with-icons.ps1` on a machine with Studio.'
-            )
-            Add-Content release-notes.md $note
+          $missing = @()
+          if ($names -notcontains 'Shaker.TextRecognizers.Activities.Design.dll') {
+            $missing += 'the design assembly (per-activity panel icons)'
           }
+          if ($names -notcontains 'icon.png') { $missing += 'the package icon' }
+
+          # The stubs stand in for assemblies Studio owns; shipping them would shadow the real ones.
+          foreach ($stub in 'System.Activities.Presentation.dll', 'System.Activities.Metadata.dll') {
+            if ($names -contains $stub) { $missing += "$stub leaked into the package" }
+          }
+
+          if ($missing.Count) {
+            Write-Host "::error::$($pkg.Name) is not publishable: $($missing -join '; ')"
+            exit 1
+          }
+          Write-Host "$($pkg.Name) is complete: designers and package icon present, no stubs shipped."
         shell: pwsh
 
       - name: Publish the release
@@ -130,5 +126,5 @@ jobs:
           gh release create "$env:TAG"
           (Get-ChildItem build/packages/*.nupkg).FullName
           --title "Text Recognizers $env:TAG"
-          --notes-file release-notes.md
+          --notes-file CHANGELOG.md
         shell: pwsh

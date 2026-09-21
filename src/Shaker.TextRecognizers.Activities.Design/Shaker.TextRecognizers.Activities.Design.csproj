@@ -9,11 +9,6 @@
     <IsPackable>false</IsPackable>
     <Nullable>disable</Nullable>
     <GenerateDocumentationFile>false</GenerateDocumentationFile>
-
-    <!-- The design-time WPF assemblies (ActivityDesigner, IRegisterMetadata, …) are supplied by
-         UiPath Studio. They are referenced for compile only and resolved from the local Studio
-         install. Override UiPathStudioDir if Studio is installed elsewhere. -->
-    <UiPathStudioDir Condition="'$(UiPathStudioDir)' == ''">$(LOCALAPPDATA)\Programs\UiPath\Studio</UiPathStudioDir>
   </PropertyGroup>
 
   <ItemGroup>
@@ -21,20 +16,17 @@
     <PackageReference Include="System.Activities" Version="5.0.0-20210730-02" PrivateAssets="all" />
   </ItemGroup>
 
+  <!--
+    .NET splits the workflow designer across System.Activities.Presentation (ActivityDesigner) and
+    System.Activities.Metadata (IRegisterMetadata, AttributeTableBuilder, MetadataStore), and publishes
+    neither - Studio supplies both at run time. Compiling still needs something with the right identity,
+    so this builds against the stubs in stubs/ and lets Studio provide the real assemblies.
+
+    Private="false" keeps the stubs out of the output and out of the package. See stubs/README.md.
+  -->
   <ItemGroup>
-    <!-- Studio-provided; do not copy/bundle (Private=false). -->
-    <Reference Include="System.Activities.Presentation">
-      <HintPath>$(UiPathStudioDir)\System.Activities.Presentation.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-    <Reference Include="System.Activities.Presentation.Model">
-      <HintPath>$(UiPathStudioDir)\System.Activities.Presentation.Model.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-    <Reference Include="System.Activities.Metadata">
-      <HintPath>$(UiPathStudioDir)\System.Activities.Metadata.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
+    <ProjectReference Include="..\..\stubs\System.Activities.Presentation\System.Activities.Presentation.csproj" Private="false" />
+    <ProjectReference Include="..\..\stubs\System.Activities.Metadata\System.Activities.Metadata.csproj" Private="false" />
   </ItemGroup>
 
 </Project>

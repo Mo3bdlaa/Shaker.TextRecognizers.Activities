@@ -1,6 +1,11 @@
 <Solution>
   <Folder Name="/src/">
     <Project Path="src/Shaker.TextRecognizers.Activities/Shaker.TextRecognizers.Activities.csproj" />
+    <Project Path="src/Shaker.TextRecognizers.Activities.Design/Shaker.TextRecognizers.Activities.Design.csproj" />
+  </Folder>
+  <Folder Name="/stubs/">
+    <Project Path="stubs/System.Activities.Presentation/System.Activities.Presentation.csproj" />
+    <Project Path="stubs/System.Activities.Metadata/System.Activities.Metadata.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Shaker.TextRecognizers.Tests/Shaker.TextRecognizers.Tests.csproj" />

@@ -11,19 +11,20 @@ and Pricing (paid listings only).
 
 ## Before you submit
 
-The `.nupkg` you upload must be built on a machine with **UiPath Studio installed**. A build
-without Studio silently omits the `*.Design.dll` from each package — the activities still
-work, but every per-activity icon is missing, because the embed is guarded by an
-`Exists(...)` condition. See [studio-design-assembly.md](studio-design-assembly.md).
+The `.nupkg` must carry the design assembly, or every activity shows a blank icon in the
+panel. It builds anywhere — the designers compile against the reference stubs in `stubs/`
+rather than a UiPath Studio install — so the artifact attached to the GitHub release is the
+one to submit. See [studio-design-assembly.md](studio-design-assembly.md).
+
+To build it yourself:
 
 ```powershell
-# on the Studio machine - builds the design assembly, packs, and verifies the icons
-# are really in the .nupkg. Fails rather than producing an icon-less package.
+# builds everything, packs, then opens the .nupkg to confirm the icons are really in it
 ./tools/pack-with-icons.ps1
 ```
 
-Packing any other way warns (`TRX0001`) when the design assembly is missing, so an
-icon-less package cannot be produced unnoticed.
+It fails rather than producing an icon-less package. Packing any other way still warns
+(`TRX0001`) if the design assembly is missing.
 
 And install one package into a scratch Studio project to check: the activities appear under
 **TextRecognizers**, each carries its own icon, and **Language** / **Kind** / **Time Zone**
@@ -165,7 +166,7 @@ Publishing is not immediate. The Marketplace security certification runs in stag
 | No "UiPath" in package ID or DLL names | clean |
 | No credentials or hard-coded secrets | none in the source |
 | Versioned | 1.0.0 |
-| Design assembly present in the uploaded package | **only if built on the Studio machine** |
+| Design assembly present in the uploaded package | yes — CI requires it (`RequireDesignAssembly=true`) |
 
 ---
 
